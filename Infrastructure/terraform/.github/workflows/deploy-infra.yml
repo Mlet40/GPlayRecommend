@@ -1,0 +1,47 @@
+name: Deploy Infra to AWS
+
+on:
+  push:
+    paths:
+      - 'infrastructure/terraform/**'  # Roda apenas se houver mudanças na infra
+    branches:
+      - main
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    permissions:
+      id-token: write
+      contents: read
+
+    steps:
+      - name: Checkout código
+        uses: actions/checkout@v3
+
+      - name: Configurar AWS CLI
+        uses: aws-actions/configure-aws-credentials@v2
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: us-east-1
+
+      - name: Instalar Terraform
+        uses: hashicorp/setup-terraform@v2
+        with:
+          terraform_version: latest
+
+      - name: Inicializar Terraform
+        run: |
+          cd infrastructure/terraform
+          terraform init
+
+      - name: Validar Terraform
+        run: |
+          cd infrastructure/terraform
+          terraform validate
+
+      - name: Aplicar Terraform
+        run: |
+          cd infrastructure/terraform
+          terraform apply -auto-approve
