@@ -10,13 +10,11 @@ resource "aws_s3_bucket" "datalake" {
 resource "aws_s3_bucket_notification" "enable_eventbridge" {
   bucket = aws_s3_bucket.datalake.id
 
-  eventbridge {
-    # ativamos a opção "S3 -> EventBridge"
-  }
+  eventbridge = true
 }
 
 # opcional: cria a “raw/” folder
-resource "aws_s3_bucket_object" "raw_folder" {
+resource "aws_s3_object" "raw_folder" {
   bucket = aws_s3_bucket.datalake.id
   key    = "raw/"
 }

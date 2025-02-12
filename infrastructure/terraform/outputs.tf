@@ -3,7 +3,6 @@ output "bucket_datalake_name" {
   value       = aws_s3_bucket.datalake.bucket
 }
 
-
 output "ecs_cluster_arn" {
   description = "ARN do ECS Cluster"
   value       = aws_ecs_cluster.this.arn

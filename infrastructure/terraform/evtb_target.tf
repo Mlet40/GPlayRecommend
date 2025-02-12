@@ -7,7 +7,7 @@ resource "aws_cloudwatch_event_target" "ecs_run_task_target" {
 
   ecs_target {
     launch_type     = "FARGATE"
-    task_definition = aws_ecs_task_definition.featstore_task.arn
+    task_definition_arn = aws_ecs_task_definition.featstore_task.arn
 
     network_configuration {
       subnets          = [aws_subnet.public_subnet.id]

@@ -1,0 +1,7 @@
+# Ignorar a pasta .terraform local
+.terraform/
+.terraform.lock.hcl
+
+# Ignorar estado
+terraform.tfstate
+terraform.tfstate.backup
