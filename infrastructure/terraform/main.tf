@@ -17,3 +17,9 @@ resource "aws_s3_bucket_object" "processed_folder" {
   key    = "processed/"
 }
 
+
+resource "aws_s3_bucket_object" "models_folder" {
+  bucket = aws_s3_bucket.datalake.id
+  key    = "models/"
+}
+
