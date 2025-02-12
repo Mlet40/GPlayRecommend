@@ -1,9 +1,22 @@
 variable "aws_region" {
-  description = "Região AWS para provisionamento dos recursos"
-  default     = "us-east-1"
+  type    = string
+  default = "us-east-1"
 }
 
 variable "bucket_name" {
-  description = "Nome do bucket S3"
-  default     = "globoplay-datalake"
+  type        = string
+  description = "Nome do bucket S3 do datalake"
+  default     = "globoplay-datalak"
 }
+
+variable "vpc_cidr" {
+  type    = string
+  default = "10.0.0.0/16"
+}
+
+variable "my_docker_image" {
+  type        = string
+  description = "Imagem Docker para a Task de Feature Store (ex.: ECR repo)"
+  default     = "123456789012.dkr.ecr.us-east-1.amazonaws.com/featstore:latest"
+}
+

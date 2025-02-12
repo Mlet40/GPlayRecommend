@@ -1,0 +1,34 @@
+Pessoa de Infra
+	
+Cria os datalakes no S3
+Cria um evento  eventBridge para trigar ec2 com Mflow na chegada do arquivo no datalake /raw
+Cria um repo no GitHub para a aplicação de Engenharia de  feature store
+Cria um pipeline para  Engenharia de  feature store com teste
+Cria Ec2 ou Fargate para rodar o container ou Ec2 de Engenharia de Feature Store com Mflow e Feast
+Cria observabilidade para aplicação de Engenharia de Feature Store
+Cria o Dynamodb para repositório de FeatureStore
+Cria um repo no GitHub para a aplicação de Treinamento com teste unitario
+Cria Ec2 ou Fargate para  rodar o container ou Ec2 treinamento dos modelos 
+Cria observabilidade para aplicação de Treinamento
+Cria S3 para armazenar os .h5 do modelo / cada  pasta tem seu modelo
+Cria um evento no EventBridge para quando o modelo .h5 é salvo em uma das pasta do modelo triga a lambda salva metadados
+Cria uma lambda para fazer o commit no metadados no GitHub, dizendo que existe um novo ..h5
+Cria um workflow no GitHub onde rodará um pipeline para deploy de uma nova inferência usando o novo .h5, nesse pipeline haverá testes
+Cria um Ec2 ou Fargate para receber o container do deploy do GitHub que contem a inferência com novo .h5 na aws Fargate ou Ec2
+Cria observabilidade para aplicação de Inferencia
+
+
+Pessoa Engenheiro de Dados
+
+Limpar e categorizar os dados csvs da pasta Itens, separando por regional, nacional ou internacional / e subcategorias
+	(Pelo que vi a maioria é regional, mas tem sua subcategorias, seria interessante  usar algum ML para categorizar a noticia como Bag of Words, TF-ID, Word2Vec,Bert, transformer...) - e os dados que  tem categoria na url podem servir de treinamento para esses modelos.
+	 
+Criar FeatureStore para as pessoas que tem histórico, para cada cliente, quais categorias foram acessadas, ano e qual noticia regional ele acessou, que deve ser a região dele e que isso pode servir de treinamento do modelo (obter os dados no csvs de treino )
+
+Criar o  FeatureStore para Cold Start, obter todos os dados de histórico dos primeiros acessos com as categorias e datas, que foram acessados por  marinheiros de primeira viajem.  (obter os dados no csvs de treino )
+
+Na inferência a idéia  é obter  o userId, se achar esse userId na featureStore de cliente que tem histórico, carrega as features categorias, data, e regiões que foram acessadas, o modelo usara essas features para realizar a recomendação de noticia
+	Se o cliente for um cold Start obtem os dados da FeatureStore de Cold Start obtendo as features categorias e datas para recomendar a categoria de noticia que ira recomendar com a data mais atual (feature na data seria mais para predizer o comportamento da nova pessoa na safra, exemplo em 2020 os cold satrt acessavam mais noticias de saúde por conta da covid, em 2025 provavelmente a noticia de politica internacional como a do Trump)
+
+Use o python com Feast e mflow.
+

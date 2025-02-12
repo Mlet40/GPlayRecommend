@@ -1,0 +1,82 @@
+1. Data Lakes e EventBridge (Chegada de Dados)
+Criar os Data Lakes no S3
+
+Buckets para raw/, processed/, models/ (onde .h5 serão armazenados).
+Criar um evento EventBridge para disparar a aplicação de Engenharia de Feature Store assim que novos arquivos chegarem em raw/.
+
+Pode acionar uma tarefa Fargate ou instância EC2 que execute o contêiner do Feature Store.
+2. Repositório e Pipeline da Engenharia de Feature Store
+Criar um repositório no GitHub para a aplicação de Engenharia de Feature Store (ex.: GPlayRecommend-FeatstoreEngine.git).
+
+Esse repositório conterá o código (Python + Feast + scripts de limpeza de dados).
+Criar pipeline de CI/CD (GitHub Actions) para a Engenharia de Feature Store:
+
+Build do contêiner (Dockerfile).
+Testes unitários.
+(Opcional) Deploy automático para ECS/Fargate ou EC2.
+Criar EC2 ou Fargate para rodar o contêiner de Engenharia de Feature Store (com MLflow instalado localmente apenas se for necessário logar algum passo nesse estágio).
+
+Configurar IAM Role para acesso ao S3 e DynamoDB.
+Criar Observabilidade (CloudWatch Logs, métricas) para esse processo de Engenharia de Feature Store.
+
+Criar DynamoDB para servir como repositório da Feature Store (tabelas para usuários com histórico e/ou cold start).
+
+3. Repositório e Pipeline de Treinamento
+Criar um repositório no GitHub para a aplicação de Treinamento (ex.: GPlayRecommend-Trainning.git).
+
+Código de treino (Python, PyTorch/Keras/Sklearn), chamando MLflow para logar modelos.
+Criar EC2 ou Fargate para rodar o contêiner de Treinamento dos modelos:
+
+Ler dados do S3/DynamoDB.
+Ao fim, gerar .h5 (ou outro artifact) e logar via MLflow (ver seção do MLflow Tracking Server abaixo).
+Criar Observabilidade para o Treinamento (CloudWatch Logs, alarmes de uso de CPU/Mem).
+
+Criar S3 (ou utilizar o mesmo models/) para armazenar .h5, caso não utilize somente o MLflow para isso.
+
+Se estiver usando MLflow, os artefatos ficarão em mlflow-artifacts (vide item 14).
+Criar EventBridge para disparar alguma Lambda ou pipeline quando um novo .h5 for salvo (se preferir esse fluxo).
+
+Ou então confiar somente no MLflow Registry para versionar automaticamente.
+Criar Lambda (opcional) que faz commit no GitHub ou apenas registra logs/metadados, caso ainda queira registrar algo além do MLflow.
+
+4. Instância (ou Contêiner) para MLflow Tracking Server
+Criar infraestrutura para MLflow:
+Opção A: EC2 rodando mlflow server --backend-store-uri [DB] --default-artifact-root s3://mlflow-bucket
+Configurar Security Groups, IAM role para acesso ao S3.
+Abrir porta 5000 (ou outra) para acesso via HTTP (ou HTTPS).
+Opção B: ECS/Fargate com uma Task rodando o MLflow server (similar a um container web).
+Criar ou reutilizar um banco (RDS ou sqlite) para o “backend store”.
+Criar um bucket S3 específico para mlflow-artifacts ou definir que use models/.
+Configurar Observabilidade mínima do MLflow server (logs em CloudWatch).
+Obs.: Assim, a Pessoa Engenheira de Dados poderá, nos scripts de Treinamento, chamar mlflow.set_tracking_uri("http://EC2-MLflow:5000") e versionar automaticamente os modelos.
+
+5. Repositório e Pipeline de Inferência (API)
+Criar Repositório no GitHub para a Inferência (ex.: GPlayRecommend-API.git).
+O código de inferência (Flask/FastAPI) carregará o modelo via MLflow (ex.: “models:/nome_do_modelo/Production”) ou .h5 diretamente se preferir.
+Criar Workflow (GitHub Actions) de build e deploy dessa API:
+Baixar/instalar dependências (Flask/FastAPI, mlflow.pyfunc, etc.).
+Testes unitários/integrados (rota /predict, /coldstart).
+Deploy automático em ECS/Fargate ou EC2.
+Criar EC2 ou Fargate para rodar o contêiner de Inferência.
+Configurar IAM Role (caso precise acessar S3 ou DynamoDB).
+Se carregar o modelo via MLflow Registry, só precisa acesso HTTP ao MLflow server e/ou permissão de S3 (se for mlflow.pyfunc.load_model que puxa do S3).
+Criar Observabilidade (CloudWatch) para a aplicação de Inferência.
+Logs de acesso, métricas de latência, alarmes de CPU, etc.
+6. Fluxo de Operação
+Chega dados em raw/ → EventBridge aciona contêiner de Engenharia de Feature Store → limpa e categoriza, salva no DynamoDB e (opcional) no MLflow (alguma métrica de ingestão).
+Treinamento (sob demanda ou agendado) → contêiner em ECS/EC2 que lê Feature Store (DynamoDB ou S3), gera modelo .h5, loga no MLflow (registrando versão, métricas, artifacts).
+Modelo Registrado no MLflow: se aprovado, marca como Production.
+Inferência (API) aponta para “models:/MeuModelo/Production” (MLflow Registry) ou lê .h5 do S3.
+Observabilidade: logs no CloudWatch de cada etapa (eng. feature, train, inferência, mlflow server).
+7. Conclusão e Observações
+Com essa instância/container adicional para o MLflow Tracking Server, a Pessoa de Infra gerencia 4 frentes:
+
+Feature Store (Engenharia)
+Treinamento
+Inferência
+MLflow
+Na Inferência, você usará MLflow sim, se quiser fazer mlflow.pyfunc.load_model(...) com URIs do tipo models:/model-name/Production.
+
+Se preferir, também pode baixar manualmente o .h5 do S3 em tempo de deploy, mas ao usar MLflow Registry, a aplicação não precisa se preocupar em gerenciar versões de .h5: basta apontar para a “versão de Production”.
+
+Assim, a Pessoa de Infra provisiona todos esses recursos (EC2 ou Fargate, S3, DynamoDB, EventBridge, pipelines GitHub), e a Pessoa Engenheira de Dados desenvolve scripts que se conectam ao MLflow (para log de modelos) e à Feature Store (para ingestão e consumo de dados). Dessa forma, o projeto fica bem organizado, com cada componente tendo se
