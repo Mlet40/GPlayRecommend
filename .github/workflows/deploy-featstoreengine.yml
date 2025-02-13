@@ -47,6 +47,6 @@ jobs:
         run: |
           aws ecs run-task --cluster featstore-ecs-cluster \
                            --launch-type FARGATE \
-                           --network-configuration "awsvpcConfiguration={subnets=[subnet-abc],assignPublicIp=ENABLED}" \
-                           --task-definition featurestoreengine-task
+                           --network-configuration "awsvpcConfiguration={subnets=[subnet-0fe505b6ab2450770],assignPublicIp=ENABLED}" \
+                           --task-definition featstore-task:1
           # Ajuste "task-definition" e "subnets" conforme seu ECS e Terraform
