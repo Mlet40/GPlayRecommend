@@ -47,9 +47,4 @@ jobs:
           aws ecs run-task --cluster trainning-ecs-cluster \
                            --launch-type FARGATE \
                            --network-configuration "awsvpcConfiguration={subnets=[subnet-0fe505b6ab2450770],assignPublicIp=ENABLED}" \
-                           --task-definition $(aws ecs list-task-definitions \
-      					     --family-prefix trainning-task \
-      					     --sort DESC \
-      					     --max-items 1 \
-      					     --query 'taskDefinitionArns[0]' \
-      					     --output text)
+                           --task-definition $(aws ecs list-task-definitions --family-prefix trainning-task --sort DESC --max-items 1 --query 'taskDefinitionArns[0]' --output text)
