@@ -8,3 +8,11 @@ resource "aws_ecr_repository" "featurestoreengine" {
     Environment = "Development"
   }
 }
+
+resource "aws_ecr_repository" "trainningmodel" {
+  name                 = "trainningmodel"
+  image_tag_mutability = "MUTABLE"
+  lifecycle {
+    prevent_destroy = false
+  }
+}

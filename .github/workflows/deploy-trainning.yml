@@ -1,0 +1,55 @@
+name: Build and Deploy TrainningModel
+
+on:
+  push:
+    paths:
+      - 'application/trainningModel/**'
+    branches: [ "main" ]
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+    
+    permissions:
+      contents: read
+      id-token: write  # Se usar OIDC para AWS
+      
+    steps:
+      - name: Check out code
+        uses: actions/checkout@v3
+
+      # 1. Configurar credenciais AWS
+      - name: Configure AWS Credentials
+        uses: aws-actions/configure-aws-credentials@v2
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: us-east-1
+
+      # 2. Build do Docker da pasta TrainningModel
+      - name: Build Docker image
+        run: |
+          cd application/trainningModel
+          docker build -t trainningmodel:latest .
+
+      # 3. Login no ECR e Push
+      - name: Login to Amazon ECR
+        run: aws ecr get-login-password --region us-east-1 | docker login --username AWS --password-stdin ${{ secrets.ECR_URI }}
+
+      - name: Tag and Push
+        run: |
+          docker tag trainningmodel:latest ${{ secrets.ECR_URI }}/trainningmodel:latest
+          docker push ${{ secrets.ECR_URI }}/trainningmodel:latest
+
+      # 4. Executar nova Task ECS (opcional)
+      - name: Run ECS Task
+        run: |
+          aws ecs run-task --cluster trainning-ecs-cluster \
+                           --launch-type FARGATE \
+                           --network-configuration "awsvpcConfiguration={subnets=[subnet-0fe505b6ab2450770],assignPublicIp=ENABLED}" \
+                           --task-definition $(aws ecs list-task-definitions \
+      					     --family-prefix trainning-task \
+      					     --sort DESC \
+      					     --max-items 1 \
+      					     --query 'taskDefinitionArns[0]' \
+      					     --output text)

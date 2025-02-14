@@ -16,10 +16,10 @@ Testes unitários.
 (Opcional) Deploy automático para ECS/Fargate ou EC2.
 Criar EC2 ou Fargate para rodar o contêiner de Engenharia de Feature Store (com MLflow instalado localmente apenas se for necessário logar algum passo nesse estágio).
 
-Configurar IAM Role para acesso ao S3 e DynamoDB.
-Criar Observabilidade (CloudWatch Logs, métricas) para esse processo de Engenharia de Feature Store.
+-Configurar IAM Role para acesso ao S3 e DynamoDB.
+-Criar Observabilidade (CloudWatch Logs, métricas) para esse processo de Engenharia de Feature Store.
 
-Criar DynamoDB para servir como repositório da Feature Store (tabelas para usuários com histórico e/ou cold start).
+-Criar DynamoDB para servir como repositório da Feature Store (tabelas para usuários com histórico e/ou cold start).
 
 3. Repositório e Pipeline de Treinamento
 Criar um repositório no GitHub para a aplicação de Treinamento (ex.: GPlayRecommend-Trainning.git).

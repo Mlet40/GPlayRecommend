@@ -20,3 +20,9 @@ variable "my_docker_image" {
   default     = "353061803834.dkr.ecr.us-east-1.amazonaws.com/featurestoreengine:latest"
 }
 
+variable "trainning_docker_image" {
+  type        = string
+  description = "Imagem Docker para a Task de Feature Store (ex.: ECR repo)"
+  default     = "353061803834.dkr.ecr.us-east-1.amazonaws.com/trainningmodel:latest"
+}
+

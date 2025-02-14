@@ -1,0 +1,5 @@
+#ver logs que já rodaram eventos executados na da task do ecs - o grupo de log é /ecs/featstore
+
+aws logs filter-log-events --log-group-name "/ecs/featstore" --limit 100 --output text
+
+aws logs tail "/ecs/featstore-ecs-cluster" --follow
