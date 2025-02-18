@@ -67,7 +67,7 @@ resource "aws_ecs_task_definition" "recommend-api-task" {
       logConfiguration = {
         logDriver = "awslogs"
         options = {
-          "awslogs-group"         = "/ecs/recommend_api_log"
+          "awslogs-group"         = "/ecs/recommend_api"
           "awslogs-region"        = "us-east-1"
           "awslogs-stream-prefix" = "ecs"
         }
