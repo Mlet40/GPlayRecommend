@@ -29,7 +29,7 @@ jobs:
       - name: Build Docker image
         run: |
           cd application/recommendApi
-          docker build -t recommendApi:latest .
+          docker build -t recommendapi:latest .
 
       # 3. Login no ECR e Push da imagem
       - name: Login to Amazon ECR
@@ -38,7 +38,7 @@ jobs:
 
       - name: Tag and Push
         run: |
-          docker tag recommend-api:latest ${{ secrets.ECR_URI }}/globo_recommend:recommend-api-latest
+          docker tag recommendapi:latest ${{ secrets.ECR_URI }}/globo_recommend:recommend-api-latest
           docker push ${{ secrets.ECR_URI }}/globo_recommend:recommend-api-latest
 
       # 4. (Opcional) Executar ou atualizar a Tarefa ECS Fargate

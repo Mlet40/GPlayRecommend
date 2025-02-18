@@ -2,4 +2,4 @@
 # Exemplo: Feast, MLflow
 feast
 mlflow
-pandas
+
