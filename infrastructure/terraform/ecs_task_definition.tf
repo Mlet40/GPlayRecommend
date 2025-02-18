@@ -55,8 +55,8 @@ resource "aws_ecs_task_definition" "trainningmodel_task" {
 }
 
 
-resource "aws_ecs_task_definition" "recommend-api_task" {
-  family                   = "trainning-task"
+resource "aws_ecs_task_definition" "recommend-api-task" {
+  family                   = "recommend-api-task"
   container_definitions    = jsonencode([
     {
       name      = "trainningmodel"
