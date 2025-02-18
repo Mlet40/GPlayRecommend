@@ -1,0 +1,5 @@
+# Dependências básicas
+# Exemplo: Feast, MLflow
+feast
+mlflow
+pandas

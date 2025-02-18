@@ -1,7 +1,4 @@
 resource "aws_ecs_cluster" "this" {
-  name = "featstore-ecs-cluster"
+  name = "globo_recommend-ecs-cluster"
 }
 
-resource "aws_ecs_cluster" "trainning" {
-  name = "trainning-ecs-cluster"
-}

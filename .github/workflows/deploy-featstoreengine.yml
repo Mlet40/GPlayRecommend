@@ -38,14 +38,14 @@ jobs:
 
       - name: Tag and Push
         run: |
-          docker tag featurestoreengine:latest ${{ secrets.ECR_URI }}/featurestoreengine:latest
-          docker push ${{ secrets.ECR_URI }}/featurestoreengine:latest
+          docker tag featurestoreengine:latest ${{ secrets.ECR_URI }}/globo_recommend:featstore-latest
+          docker push ${{ secrets.ECR_URI }}/globo_recommend:featstore-latest
 
       # 4. (Opcional) Executar ou atualizar a Tarefa ECS Fargate
       # Se quiser rodar um "RunTask" (Task "one-shot"):
       - name: Run ECS Task
         run: |
-          aws ecs run-task --cluster featstore-ecs-cluster \
+          aws ecs run-task --cluster globo_recommend-ecs-cluster \
                            --launch-type FARGATE \
                            --network-configuration "awsvpcConfiguration={subnets=[subnet-0fe505b6ab2450770],assignPublicIp=ENABLED}" \
                            --task-definition $(aws ecs list-task-definitions --family-prefix featstore-task --sort DESC --max-items 1 --query 'taskDefinitionArns[0]' --output text)

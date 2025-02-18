@@ -17,12 +17,18 @@ variable "vpc_cidr" {
 variable "my_docker_image" {
   type        = string
   description = "Imagem Docker para a Task de Feature Store (ex.: ECR repo)"
-  default     = "353061803834.dkr.ecr.us-east-1.amazonaws.com/featurestoreengine:latest"
+  default     = "353061803834.dkr.ecr.us-east-1.amazonaws.com/globo_recommend:globo_recommend:featstore-latest"
 }
 
 variable "trainning_docker_image" {
   type        = string
   description = "Imagem Docker para a Task de Feature Store (ex.: ECR repo)"
-  default     = "353061803834.dkr.ecr.us-east-1.amazonaws.com/trainningmodel:latest"
+  default     = "353061803834.dkr.ecr.us-east-1.amazonaws.com/globo_recommend:trainning-latest"
+}
+
+variable "recommend_api_docker_image" {
+  type        = string
+  description = "Imagem Docker para a Task de Feature Store (ex.: ECR repo)"
+  default     = "353061803834.dkr.ecr.us-east-1.amazonaws.com/globo_recommend:recommend-api-latest"
 }
 
