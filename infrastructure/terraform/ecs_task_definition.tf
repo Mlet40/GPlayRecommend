@@ -1,5 +1,5 @@
 resource "aws_ecs_task_definition" "featstore_task" {
-  family                   = "featstore-task"
+  family                   = "featstore-task-2"
   requires_compatibilities = ["FARGATE"]
   cpu                      = 256
   memory                   = 512
