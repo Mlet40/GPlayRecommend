@@ -1,15 +1,18 @@
-# Escolha uma imagem base Python
-FROM python:3.9-slim
+# Usa imagem oficial do Python
+FROM python:3.9
 
-# Crie uma pasta de trabalho
+# Define diretório de trabalho
 WORKDIR /app
 
-# Copie requirements e instale
-COPY requirements.txt .
+# Copia os arquivos para o container
+COPY requirements.txt requirements.txt
+COPY app.py app.py
+
+# Instala dependências
 RUN pip install --no-cache-dir -r requirements.txt
 
-# Copie o resto do código
-COPY app.py .
+# Expõe a porta 5000 para o tráfego HTTP
+EXPOSE 5000
 
-# Comando de execução do script (imprime Hello World)
+# Comando para rodar o app
 CMD ["python", "app.py"]
