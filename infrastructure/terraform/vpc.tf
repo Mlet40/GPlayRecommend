@@ -1,3 +1,6 @@
+
+# egando as zonas de disponibilidade disponíveis na região atual
+data "aws_availability_zones" "available" {}
 # Criando a VPC
 resource "aws_vpc" "this" {
   cidr_block           = var.vpc_cidr
