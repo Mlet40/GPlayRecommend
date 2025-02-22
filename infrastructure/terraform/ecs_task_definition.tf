@@ -31,7 +31,7 @@ resource "aws_ecs_task_definition" "trainningmodel_task" {
   family                   = "trainning-task"
   container_definitions    = jsonencode([
     {
-      name      = "trainningmodel"
+      name      = "trainningmodel-container"
       image     = "${var.trainning_docker_image}"
       cpu       = 256
       memory    = 512
@@ -59,7 +59,7 @@ resource "aws_ecs_task_definition" "recommend-api-task" {
   family                   = "recommend-api-task"
   container_definitions    = jsonencode([
     {
-      name      = "trainningmodel"
+      name      = "recommend-api-container"
       image     = "${var.recommend_api_docker_image}"
       cpu       = 256
       memory    = 512
