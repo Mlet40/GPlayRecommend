@@ -5,7 +5,7 @@ resource "aws_ecs_service" "recommend_api_service" {
   launch_type     = "FARGATE"
 
   desired_count   = 1 # Mantém pelo menos 1 Task rodando sempre!
-
+  enable_execute_command = true
   network_configuration {
     subnets         = [aws_subnet.public_subnet.id]
     security_groups = [aws_security_group.ecs_sg.id]
