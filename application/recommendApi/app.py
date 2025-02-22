@@ -42,7 +42,7 @@ def login():
         
         return jsonify({'token': token})
     
-    return jsonify({'message': 'Usuário ou senha incorretos'}), 401
+    return jsonify({'message': 'Usuário ou senha incorretos!!'}), 401
 
 # Rota protegida por JWT
 @app.route('/protected', methods=['GET'])
