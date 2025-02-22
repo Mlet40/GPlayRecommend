@@ -43,14 +43,21 @@ jobs:
 
       # 4. (Opcional) Executar ou atualizar a Tarefa ECS Fargate
       # Se quiser rodar um "RunTask" (Task "one-shot"):
-      - name: Run ECS Task
+      #- name: Run ECS Task
+      #  run: |
+      #   aws ecs run-task --cluster globo_recommend-ecs-cluster \
+      #                    --launch-type FARGATE \
+      #                    --network-configuration "awsvpcConfiguration={subnets=[$(aws ec2 describe-subnets \
+      #                      --filters Name=vpc-id,Values=$(aws ec2 describe-vpcs \
+      #                      --filters Name=tag:Name,Values=globo-vpc --query 'Vpcs[0].VpcId' --output text) \
+      #                      Name=tag:Name,Values=globo-public-subnet --query 'Subnets[0].SubnetId' --output text)],securityGroups=[$(aws ec2 describe-security-groups --filters Name=tag:Name,Values=globo-ecs-sg --query 'SecurityGroups[0].GroupId' --output text)],assignPublicIp=ENABLED}" \
+      #                    --task-definition $(aws ecs list-task-definitions \
+      #                       --family-prefix recommend-api-task --sort DESC \
+      #                       --max-items 1 --query 'taskDefinitionArns[0]' --output text)        
+
+        # Atualizar a Task Definition para usar a nova imagem
+      - name: Update ECS Service
         run: |
-         aws ecs run-task --cluster globo_recommend-ecs-cluster \
-                          --launch-type FARGATE \
-                          --network-configuration "awsvpcConfiguration={subnets=[$(aws ec2 describe-subnets \
-                            --filters Name=vpc-id,Values=$(aws ec2 describe-vpcs \
-                            --filters Name=tag:Name,Values=globo-vpc --query 'Vpcs[0].VpcId' --output text) \
-                            Name=tag:Name,Values=globo-public-subnet --query 'Subnets[0].SubnetId' --output text)],securityGroups=[$(aws ec2 describe-security-groups --filters Name=tag:Name,Values=globo-ecs-sg --query 'SecurityGroups[0].GroupId' --output text)],assignPublicIp=ENABLED}" \
-                          --task-definition $(aws ecs list-task-definitions \
-                             --family-prefix recommend-api-task --sort DESC \
-                             --max-items 1 --query 'taskDefinitionArns[0]' --output text)                              
+          aws ecs update-service --cluster globo_recommend-ecs-cluster \
+                                 --service recommend-api-service \
+                                 --force-new-deployment
