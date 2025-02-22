@@ -64,6 +64,13 @@ resource "aws_ecs_task_definition" "recommend-api-task" {
       cpu       = 256
       memory    = 512
       essential = true
+	  portMappings = [
+        {
+          containerPort = 5000  # Essa linha é ESSENCIAL!
+          hostPort      = 5000
+          protocol      = "tcp"
+        }
+      ]
       logConfiguration = {
         logDriver = "awslogs"
         options = {
