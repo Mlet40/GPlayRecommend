@@ -4,3 +4,4 @@ feast
 mlflow
 flask
 pyjwt
+pandas
