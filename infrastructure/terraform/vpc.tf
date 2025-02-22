@@ -31,7 +31,7 @@ resource "aws_subnet" "public_subnet" {
   tags = {
     Name = "globo-public-subnet"
   }
-
+}
 
 # Criando Subnet Pública (Para Load Balancer ou Bastion Host)
 resource "aws_subnet" "public_subnet_2" {
