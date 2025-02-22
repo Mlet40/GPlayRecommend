@@ -45,11 +45,6 @@ jobs:
       # Se quiser rodar um "RunTask" (Task "one-shot"):
       - name: Run ECS Task
         run: |
-          aws ecs run-task --cluster globo_recommend-ecs-cluster \
-                           --launch-type FARGATE \
-                           --network-configuration "awsvpcConfiguration={subnets=[subnet-0fe505b6ab2450770],assignPublicIp=ENABLED}" \
-                           --task-definition $(aws ecs list-task-definitions --family-prefix recommend-api-task --sort DESC --max-items 1 --query 'taskDefinitionArns[0]' --output text)
-          # Ajuste "task-definition" e "subnets" conforme seu ECS e Terraform
          aws ecs run-task --cluster globo_recommend-ecs-cluster \
                           --launch-type FARGATE \
                           --network-configuration "awsvpcConfiguration={subnets=[$(aws ec2 describe-subnets \
