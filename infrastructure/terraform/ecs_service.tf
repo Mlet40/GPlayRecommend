@@ -1,7 +1,7 @@
 resource "aws_ecs_service" "recommend_api_service" {
   name            = "recommend-api-service"
   cluster         = aws_ecs_cluster.this.id
-  task_definition = aws_ecs_task_definition.recommend_api_task.arn
+  task_definition = aws_ecs_task_definition.recommend-api-task.arn
   launch_type     = "FARGATE"
 
   desired_count   = 1 # Mantém pelo menos 1 Task rodando sempre!
