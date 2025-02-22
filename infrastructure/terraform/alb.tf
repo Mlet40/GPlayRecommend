@@ -3,7 +3,7 @@ resource "aws_lb" "recommend_api_lb" {
   internal           = false
   load_balancer_type = "application"
   security_groups    = [aws_security_group.ecs_sg.id]
-  subnets           = [aws_subnet.public_subnet.id]
+  subnets           = [aws_subnet.public_subnet.id, aws_subnet.public_subnet_2.id] # Agora tem 2 subnets!
 }
 
 resource "aws_lb_target_group" "recommend_api_tg" {

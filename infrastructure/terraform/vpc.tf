@@ -31,6 +31,18 @@ resource "aws_subnet" "public_subnet" {
   tags = {
     Name = "globo-public-subnet"
   }
+
+
+# Criando Subnet Pública (Para Load Balancer ou Bastion Host)
+resource "aws_subnet" "public_subnet_2" {
+  vpc_id                  = aws_vpc.this.id
+  cidr_block              = "10.0.1.0/24"
+  availability_zone       = data.aws_availability_zones.available.names[1]
+  map_public_ip_on_launch = true
+
+  tags = {
+    Name = "globo-public-subnet-2"
+  }
 }
 
 # Criando Tabela de Rotas Pública
@@ -52,6 +64,12 @@ resource "aws_route" "public_route" {
 # Associando a Subnet Pública à Tabela de Rotas Pública
 resource "aws_route_table_association" "public_assoc" {
   subnet_id      = aws_subnet.public_subnet.id
+  route_table_id = aws_route_table.public_rt.id
+}
+
+# Associando a Subnet Pública à Tabela de Rotas Pública
+resource "aws_route_table_association" "public_assoc_2" {
+  subnet_id      = aws_subnet.public_subnet_2.id
   route_table_id = aws_route_table.public_rt.id
 }
 
