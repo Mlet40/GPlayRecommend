@@ -7,7 +7,15 @@ resource "aws_security_group" "ecs_sg" {
     from_port   = 5000
     to_port     = 5000
     protocol    = "tcp"
-    cidr_blocks = ["0.0.0.0/0"] # ⚠️ Permite acesso público (Ajuste conforme necessário)
+    cidr_blocks = ["0.0.0.0/0"] # Permite acesso público (Ajuste conforme necessário)
+  }
+
+  # Permitir tráfego de entrada na porta 80
+  ingress {
+    from_port   = 80
+    to_port     = 80
+    protocol    = "tcp"
+    cidr_blocks = ["0.0.0.0/0"] # Permite acesso público (Ajuste conforme necessário)
   }
 
   # Permitir tráfego de saída irrestrito (ECS precisa acessar internet)
