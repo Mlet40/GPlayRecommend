@@ -25,7 +25,7 @@ resource "aws_lb_target_group" "recommend_api_tg" {
 
 resource "aws_lb_listener" "http" {
   load_balancer_arn = aws_lb.recommend_api_lb.arn
-  port              = 80
+  port              = 5000
   protocol          = "HTTP"
 
   default_action {
