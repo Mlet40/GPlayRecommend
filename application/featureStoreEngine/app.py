@@ -3,9 +3,6 @@ import pandas as pd
 import boto3
 from io import BytesIO
 
-from feast import Entity, FeatureView, Field
-from feast.types import Int64, Float64, String  # Importando os novos tipos
-from feast.infra.offline_stores.file_source import FileSource
 
 # Configurações do S3
 bucket_name = "globoplay-datalak"

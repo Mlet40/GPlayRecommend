@@ -1,4 +1,4 @@
-userId, titulo, conteudo,url,tempo leitura em segundos
+userId, titulo, conteudo,url,tempo_leitura_segundos
 1, Corinthians campeão, Corinthians jogou coo palmeiras e ganhou o jogo, http://esporte.com,600 
 1, Ferrari lançou o novo modelo, Ferari , http://esporte.com, 720
 1, Ferrari é campeã na F1, Ferrari é campeã de construtores, http://esporte.com,500

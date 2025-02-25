@@ -13,7 +13,6 @@ resource "aws_iam_role" "ecs_task_role" {
   assume_role_policy = data.aws_iam_policy_document.ecs_task_assume_role_policy.json
 }
 
-# Exemplo de policy inline para permitir ler S3
 data "aws_iam_policy_document" "ecs_task_s3" {
   statement {
     actions   = ["s3:GetObject", "s3:ListBucket"]
@@ -21,6 +20,11 @@ data "aws_iam_policy_document" "ecs_task_s3" {
       aws_s3_bucket.datalake.arn,
       "${aws_s3_bucket.datalake.arn}/*"
     ]
+  }
+
+  statement {
+    actions   = ["s3:PutObject"]
+    resources = ["${aws_s3_bucket.datalake.arn}/poc/*"]
   }
 }
 
