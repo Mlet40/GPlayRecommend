@@ -21,31 +21,25 @@ data = response["Body"].read()
 df = pd.read_csv(BytesIO(data))
 df.columns = df.columns.str.strip()  # Remove espaços extras
 
-# Renomear colunas para evitar erro de espaços
-df = df.rename(columns={
-    "userId": "userId",
-    "titulo": "titulo",
-    "conteudo": "conteudo",
-    "url": "url",
-    "tempo leitura em segundos": "tempo_leitura_segundos"  # Nome corrigido
-})
+# Se as colunas já estiverem corretas, não é necessário renomeá-las.
+# Caso queira confirmar, você pode imprimir as colunas:
+print("Colunas do DataFrame:", df.columns)
 
 # Criar categorias com base no URL
 df["categoria"] = df["url"].apply(
     lambda x: "Esporte" if "esporte" in x.lower() else "Internacional" if "internacional" in x.lower() else "Regional"
 )
-print("Colunas do DataFrame:", df.columns)
 
 # Criar Features dos Usuários
 user_features = df.groupby("userId").agg(
     número_de_noticias_lidas=("titulo", "count"),
-    tempo_médio_leitura=("tempo_leitura_segundos", "mean"),  # Corrigido
-    categorias_lidas=("categoria", lambda x: list(set(x)))  # Lista de categorias únicas lidas
+    tempo_médio_leitura=("tempo_leitura_segundos", "mean"),
+    categorias_lidas=("categoria", lambda x: list(set(x)))
 ).reset_index()
 
 # Criar Features das Notícias
 news_features = df.groupby("titulo").agg(
-    tempo_médio_leitura=("tempo_leitura_segundos", "mean"),  # Corrigido
+    tempo_médio_leitura=("tempo_leitura_segundos", "mean"),
     popularidade=("titulo", "count"),
     categoria=("categoria", "first")
 ).reset_index()

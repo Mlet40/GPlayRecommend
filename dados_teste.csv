@@ -1,13 +1,25 @@
-userId, titulo, conteudo,url
-1, Corinthians campeão, Corinthians jogou coo palmeiras e ganhou o jogo, http://esporte.com
-1, Ferrari lançou o novo modelo, Ferari , http://esporte.com
-1, Ferrari é campeã na F1, Ferrari é campeã de construtores, http://esporte.com
-2, Corinthians campeão, Corinthians jogou coo palmeiras e ganhou o jogo, http://esporte.com
-2, Ferrari lançou o novo modelo, Ferari , http://esporte.com
-2, Vulcão instinto é ativado novamente, Vulcão na itália é ativado novamente, http://internacional.com
-2, Morador de coritiba ganha a mega sena , Morador de coritiba ganha a mega sena, http://regional.com
-3, Corinthians campeão, Corinthians jogou coo palmeiras e ganhou o jogo, http://esporte.com
-3, Ferrari lançou o novo modelo, Ferari , http://esporte.com
-3, Ferrari é campeã na F1, Ferrari é campeã de construtores, http://esporte.com
-3, Vulcão instinto é ativado novamente, Vulcão na itália é ativado novamente, http://internacional.com
-3, Morador de coritiba ganha a mega sena , Morador de coritiba ganha a mega sena, http://regional.com
+userId, titulo, conteudo,url,tempo leitura em segundos
+1, Corinthians campeão, Corinthians jogou coo palmeiras e ganhou o jogo, http://esporte.com,600 
+1, Ferrari lançou o novo modelo, Ferari , http://esporte.com, 720
+1, Ferrari é campeã na F1, Ferrari é campeã de construtores, http://esporte.com,500
+2, Corinthians campeão, Corinthians jogou coo palmeiras e ganhou o jogo, http://esporte.com,560
+2, Ferrari lançou o novo modelo, Ferari , http://esporte.com,780
+2, Vulcão instinto é ativado novamente, Vulcão na itália é ativado novamente, http://internacional.com,300
+2, Morador de coritiba ganha a mega sena , Morador de coritiba ganha a mega sena, http://regional.com,500
+3, Corinthians campeão, Corinthians jogou coo palmeiras e ganhou o jogo, http://esporte.com,460
+3, Ferrari lançou o novo modelo, Ferari , http://esporte.com,900
+3, Ferrari é campeã na F1, Ferrari é campeã de construtores, http://esporte.com,800
+3, Vulcão instinto é ativado novamente, Vulcão na itália é ativado novamente, http://internacional.com,320
+3, Morador de coritiba ganha a mega sena , Morador de coritiba ganha a mega sena, http://regional.com,200
+4, Corinthians campeão, Corinthians jogou coo palmeiras e ganhou o jogo, http://esporte.com,600 
+4, Ferrari lançou o novo modelo, Ferari , http://esporte.com, 720
+4, Ferrari é campeã na F1, Ferrari é campeã de construtores, http://esporte.com,500
+1, Corinthians campeão, Corinthians jogou coo palmeiras e ganhou o jogo, http://esporte.com,560
+2, Ferrari lançou o novo modelo, Ferari , http://esporte.com,780
+4, Vulcão instinto é ativado novamente, Vulcão na itália é ativado novamente, http://internacional.com,300
+2, Morador de coritiba ganha a mega sena , Morador de coritiba ganha a mega sena, http://regional.com,500
+3, Corinthians campeão, Corinthians jogou coo palmeiras e ganhou o jogo, http://esporte.com,260
+3, Ferrari lançou o novo modelo, Ferari , http://esporte.com,500
+3, Ferrari é campeã na F1, Ferrari é campeã de construtores, http://esporte.com,300
+3, Vulcão instinto é ativado novamente, Vulcão na itália é ativado novamente, http://internacional.com,150
+3, Morador de coritiba ganha a mega sena , Morador de coritiba ganha a mega sena, http://regional.com,100
