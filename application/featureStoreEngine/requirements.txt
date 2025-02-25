@@ -1,5 +1,8 @@
 # Dependências básicas
 # Exemplo: Feast, MLflow
+pandas
+boto3
 feast
-mlflow
+pyarrow
+
 
