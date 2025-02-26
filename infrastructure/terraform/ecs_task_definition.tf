@@ -13,8 +13,8 @@ resource "aws_ecs_task_definition" "featstore_task" {
   {
     "name": "featstore-container",
     "image": "${var.my_docker_image}",
-    "cpu": 4096,         // Container-level: 4 vCPUs
-    "memory": 16384,     // Container-level: 16GB
+    "cpu": 4096,
+    "memory": 16384,
     "essential": true,
     "logConfiguration": {
       "logDriver": "awslogs",
@@ -28,6 +28,7 @@ resource "aws_ecs_task_definition" "featstore_task" {
 ]
 DEFS
 }
+
 
 
 resource "aws_ecs_task_definition" "trainningmodel_task" {
