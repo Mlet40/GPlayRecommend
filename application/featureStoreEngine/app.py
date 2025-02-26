@@ -17,21 +17,23 @@ def load_csv_from_s3(bucket, key):
     return pd.read_csv(BytesIO(data))
 
 # --- CARREGAR ARQUIVOS DO S3 ---
+print("CARREGAR ARQUIVOS DO S3")
 response = s3.list_objects_v2(Bucket=bucket_name, Prefix=input_prefix)
 all_files = [obj['Key'] for obj in response.get('Contents', [])]
 
 # Seleciona os arquivos de treinamento (contendo "treino" no nome)
+print("Seleciona os arquivos de treinamento (contendo treino no nome)")
 treino_files = [key for key in all_files if "treino" in key]
 dfs_treino = [load_csv_from_s3(bucket_name, key) for key in treino_files]
 df_treino = pd.concat(dfs_treino, ignore_index=True)
 
-# Seleciona os arquivos de itens (contendo "itens-parte" no nome)
+print("Seleciona os arquivos de itens (contendo itens-parte no nome)")
 part_files = [key for key in all_files if "itens-parte" in key]
 dfs_part = [load_csv_from_s3(bucket_name, key) for key in part_files]
 df_part = pd.concat(dfs_part, ignore_index=True)
 
 # --- PROCESSAMENTO DOS DADOS DE TREINO ---
-# Remove registros indesejados na coluna 'history'
+print("Remove registros indesejados na coluna 'history'")
 df_treino = df_treino[~df_treino['history'].str.contains(r"(esid:conteudo_editorial_g1)", na=False, case=False)]
 cols_split = ['history', 'timestampHistory', 'numberOfClicksHistory', 'timeOnPageHistory',
               'scrollPercentageHistory', 'pageVisitsCountHistory', 'timestampHistory_new']
@@ -39,10 +41,11 @@ for col in cols_split:
     df_treino[col] = df_treino[col].str.split(',')
 df_treino = df_treino.explode(cols_split, ignore_index=True)
 
-# Mescla os dados de treino com os itens
+print("Mescla os dados de treino com os itens")
 df = df_treino.merge(df_part, left_on='history', right_on='page', how='left')
 
 # --- PREPARAÇÃO PARA RECOMENDAÇÃO ---
+print("reajando a categoria")
 df['categoria'] = df['url'].str.extract(r"g1\.globo\.com/([^/]+)/", expand=False).str.lower()
 df['categoria'] = df['categoria'].replace({
     'rio-de-janeiro': 'rj', 'sao-paulo': 'sp', 'bahia': 'ba', 'espirito-santo': 'es',
@@ -54,10 +57,12 @@ df['categoria'] = df['categoria'].replace({
 })
 df = df.dropna(subset=['url', 'issued', 'modified', 'title', 'body', 'caption'])
 
+print("selecionadndo quantidade para teinamento")
 # Seleciona uma amostra para a próxima etapa
 df_based = df.sample(n=30000, random_state=400)
 
 # --- LIMPEZA DO TEXTO ---
+print("limpando stopwords")
 stop_words = {
     'a', 'alguém', 'alguma', 'algumas', 'alguns', 'ainda', 'além', 'ali', 'anterior', 'antes', 'ao', 'aos', 
     'aquela', 'aquelas', 'aqueles', 'aqui', 'aquilo', 'as', 'assim', 'até', 'através', 'baixo', 'bastante', 
@@ -76,6 +81,7 @@ stop_words = {
 }
 
 def limpar_descricao(descricao):
+    
     palavras = descricao.lower().split()
     palavras_limpa = [palavra for palavra in palavras if palavra not in stop_words and palavra not in string.punctuation]
     return ' '.join(palavras_limpa)
@@ -87,6 +93,6 @@ def save_to_s3(df, filename, prefix=output_prefix):
     buffer = BytesIO()
     df.to_parquet(buffer, index=False)
     s3.put_object(Bucket=bucket_name, Key=f"{prefix}{filename}", Body=buffer.getvalue())
-
+print("salvando no s3")
 # Exemplo: salvar o DataFrame pré-processado (featstore base) em formato Parquet
 save_to_s3(df_based, "featstore_base.parquet")
