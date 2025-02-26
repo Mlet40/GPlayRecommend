@@ -4,5 +4,5 @@ pandas
 boto3
 feast
 pyarrow
-
-
+numpy 
+BytesIO
