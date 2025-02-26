@@ -1,8 +1,8 @@
 resource "aws_ecs_task_definition" "featstore_task" {
   family                   = "featstore-task-2"
   requires_compatibilities = ["FARGATE"]
-  cpu                      = "2048"    # 0.5 vCPU
-  memory                   = "16384"   # 4GB de memória
+  cpu                      = "4096"    # Task-level: 4 vCPUs
+  memory                   = "16384"   # Task-level: 16GB
   network_mode             = "awsvpc"
 
   execution_role_arn = aws_iam_role.ecs_execution_role.arn
@@ -13,6 +13,8 @@ resource "aws_ecs_task_definition" "featstore_task" {
   {
     "name": "featstore-container",
     "image": "${var.my_docker_image}",
+    "cpu": 4096,         // Container-level: 4 vCPUs
+    "memory": 16384,     // Container-level: 16GB
     "essential": true,
     "logConfiguration": {
       "logDriver": "awslogs",
@@ -26,6 +28,7 @@ resource "aws_ecs_task_definition" "featstore_task" {
 ]
 DEFS
 }
+
 
 resource "aws_ecs_task_definition" "trainningmodel_task" {
   family                   = "trainning-task"
