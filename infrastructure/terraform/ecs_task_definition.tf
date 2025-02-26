@@ -1,8 +1,8 @@
 resource "aws_ecs_task_definition" "featstore_task" {
   family                   = "featstore-task-2"
   requires_compatibilities = ["FARGATE"]
-  cpu                      = 256
-  memory                   = 512
+  cpu                      = "512"    # 0.5 vCPU
+  memory                   = "4096"   # 4GB de memória
   network_mode             = "awsvpc"
 
   execution_role_arn = aws_iam_role.ecs_execution_role.arn
