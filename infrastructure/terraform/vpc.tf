@@ -1,3 +1,22 @@
+# Criar um Elastic IP para o NAT Gateway
+resource "aws_eip" "nat" {
+  vpc = true
+
+  tags = {
+    Name = "globo-nat-eip"
+  }
+}
+
+# Criar o NAT Gateway na subnet pública
+resource "aws_nat_gateway" "natgw" {
+  allocation_id = aws_eip.nat.id
+  subnet_id     = aws_subnet.public_subnet.id
+  depends_on    = [aws_internet_gateway.igw]
+
+  tags = {
+    Name = "globo-nat-gateway"
+  }
+}
 
 # egando as zonas de disponibilidade disponíveis na região atual
 data "aws_availability_zones" "available" {}
@@ -83,6 +102,13 @@ resource "aws_subnet" "private_subnet" {
   tags = {
     Name = "globo-private-subnet"
   }
+}
+
+# Atualizar a Tabela de Rotas Privada para usar o NAT Gateway
+resource "aws_route" "private_nat_route" {
+  route_table_id         = aws_route_table.private_rt.id
+  destination_cidr_block = "0.0.0.0/0"
+  nat_gateway_id         = aws_nat_gateway.natgw.id
 }
 
 # Criando Tabela de Rotas Privada (Sem acesso à internet)
