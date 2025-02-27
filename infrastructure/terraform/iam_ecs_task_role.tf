@@ -22,9 +22,9 @@ data "aws_iam_policy_document" "ecs_task_s3" {
     ]
   }
 
-  statement {
+  statement {	
     actions   = ["s3:PutObject"]
-    resources = ["${aws_s3_bucket.datalake.arn}/poc/*"]
+    resources = ["${aws_s3_bucket.datalake.arn}/*"]
   }
 }
 
