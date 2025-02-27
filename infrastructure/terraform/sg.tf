@@ -42,7 +42,7 @@ resource "aws_security_group" "ecs_task_sg" {
     from_port       = 443
     to_port         = 443
     protocol        = "tcp"
-    security_groups = [aws_security_group.vpc_endpoint_sg.id]  # Referência ao SG do VPC Endpoint
+    security_groups = [aws_security_group.ecs_sg.id]  # Referência ao SG do VPC Endpoint
   }
 
   # Opcionalmente, se sua tarefa precisar receber conexões (ingress), defina regras de entrada adequadas.
