@@ -11,6 +11,7 @@ output_prefix = "featStore/"  # Pasta de saída para a feature store
 
 s3 = boto3.client("s3")
 
+
 def load_csv_from_s3(bucket, key):
     response = s3.get_object(Bucket=bucket, Key=key)
     data = response["Body"].read()
