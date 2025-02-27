@@ -33,19 +33,16 @@ resource "aws_security_group" "ecs_sg" {
 
 resource "aws_security_group" "ecs_task_sg" {
   name        = "ecs-task-sg"
-  description = "Security Group para tarefas ECS acessarem o VPC Endpoint"
+  description = "Allow HTTPS outbound to VPC Endpoint"
   vpc_id      = aws_vpc.this.id
 
-  # Egress: permite que a tarefa se comunique via HTTPS com o VPC Endpoint
   egress {
-    description     = "Permitir saída HTTPS para o VPC Endpoint"
+    description     = "Allow HTTPS outbound to VPC Endpoint"
     from_port       = 443
     to_port         = 443
     protocol        = "tcp"
-    security_groups = [aws_security_group.ecs_sg.id]  # Referência ao SG do VPC Endpoint
+    security_groups = [aws_security_group.ecs_sg.id]
   }
-
-  # Opcionalmente, se sua tarefa precisar receber conexões (ingress), defina regras de entrada adequadas.
-  # Caso contrário, se a comunicação for apenas iniciada pela tarefa, regras de ingress podem não ser necessárias.
 }
+
 
