@@ -112,3 +112,20 @@ resource "aws_vpc_endpoint" "s3" {
     Name = "globo-s3-endpoint"
   }
 }
+
+resource "aws_vpc_endpoint" "ecr_api" {
+  vpc_id       = "aws_vpc.this.id" # Substitua pelo ID da sua VPC
+  service_name   = "com.amazonaws.${var.aws_region}.ecr.api" # Substitua pela sua região
+  vpc_endpoint_type = "Interface"
+  subnet_ids    = aws_subnet.private_subnet.id # Substitua pelo ID da sua sub-rede privada
+  security_group_ids = aws_security_group.ecs_sg.id # Substitua pelo ID do seu grupo de segurança
+}
+
+# Endpoint para o ECR DKR
+resource "aws_vpc_endpoint" "ecr_dkr" {
+  vpc_id       = "aws_vpc.this.id"
+  service_name   = "com.amazonaws.${var.aws_region}.ecr.dkr"
+  vpc_endpoint_type = "Interface"
+  subnet_ids    = aws_subnet.private_subnet.id
+  security_group_ids = aws_security_group.ecs_sg.ids
+}
