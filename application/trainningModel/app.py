@@ -15,6 +15,7 @@ input_prefix = "featStore/"
 # Pasta para salvar os dados treinados
 output_prefix = "featStore/trainned/"
 
+
 s3 = boto3.client("s3")
 
 
