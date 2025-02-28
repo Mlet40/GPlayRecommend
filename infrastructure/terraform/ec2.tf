@@ -47,7 +47,7 @@ resource "aws_autoscaling_group" "ecs_gpu_asg" {
     version = "$Latest"
   }
 
-  vpc_zone_identifier = [aws_subnet.ecs_subnet.id]
+  vpc_zone_identifier = [aws_subnet.private_subnet.id]
 
   tag {
     key                 = "Name"
