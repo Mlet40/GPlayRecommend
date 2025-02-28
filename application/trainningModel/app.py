@@ -31,8 +31,8 @@ df_based = load_parquet_from_s3(bucket_name, f"{input_prefix}featstore_base.parq
 
 print('Inicio Treinamento')
 # --- TREINAMENTO / GERAÇÃO DE FEATURES ---
-#vec = TfidfVectorizer()
-#tfidf = vec.fit_transform(df_based['body_clean'].astype(str))
+vec = TfidfVectorizer()
+tfidf = vec.fit_transform(df_based['body_clean'].astype(str))
 print('Iniciando similaridades')
 #sim = cosine_similarity(tfidf)
 #sim_df = pd.DataFrame(sim, index=df_based['history'], columns=df_based['history'])
