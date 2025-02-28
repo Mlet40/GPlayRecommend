@@ -31,16 +31,16 @@ df_based = load_parquet_from_s3(bucket_name, f"{input_prefix}featstore_base.parq
 
 print('Inicio Treinamento')
 # --- TREINAMENTO / GERAÇÃO DE FEATURES ---
-vec = TfidfVectorizer()
-tfidf = vec.fit_transform(df_based['body_clean'].astype(str))
+#vec = TfidfVectorizer()
+#tfidf = vec.fit_transform(df_based['body_clean'].astype(str))
 print('Iniciando similaridades')
-sim = cosine_similarity(tfidf)
-sim_df = pd.DataFrame(sim, index=df_based['history'], columns=df_based['history'])
+#sim = cosine_similarity(tfidf)
+#sim_df = pd.DataFrame(sim, index=df_based['history'], columns=df_based['history'])
 
 # --- SALVAR A MATRIZ DE SIMILARIDADE NO S3 ---
-def save_to_s3(df, filename, prefix=output_prefix):
-    buffer = BytesIO()
-    df.to_parquet(buffer, index=False)
-    s3.put_object(Bucket=bucket_name, Key=f"{prefix}{filename}", Body=buffer.getvalue())
+#def save_to_s3(df, filename, prefix=output_prefix):
+#    buffer = BytesIO()
+#    df.to_parquet(buffer, index=False)
+#    s3.put_object(Bucket=bucket_name, Key=f"{prefix}{filename}", Body=buffer.getvalue())
 print('Salvando no s3')
-save_to_s3(sim_df, "sim_df.parquet")
+#save_to_s3(sim_df, "sim_df.parquet")
