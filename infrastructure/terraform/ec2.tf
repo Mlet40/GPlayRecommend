@@ -17,14 +17,14 @@ resource "aws_launch_template" "ecs_gpu" {
     name = aws_iam_instance_profile.ecs_instance_profile.name
   }
 
-  instance_market_options {
-    market_type = "spot"
-
-    spot_options {
-      instance_interruption_behavior = "terminate"
+  #instance_market_options {
+  #  market_type = "spot"
+   
+  #  spot_options {
+  #    instance_interruption_behavior = "terminate"
       #max_price                    = "0.50"  # opcional: define o preço máximo que você está disposto a pagar
-    }
-  }
+  #  }
+  #}
 
   user_data = base64encode(<<EOF
 #!/bin/bash
