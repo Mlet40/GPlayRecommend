@@ -16,6 +16,7 @@ output_prefix = "featStore/trainned/"
 
 s3 = boto3.client("s3")
 
+
 def load_parquet_from_s3(bucket, key):
     response = s3.get_object(Bucket=bucket, Key=key)
     data = response["Body"].read()
