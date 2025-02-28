@@ -48,4 +48,4 @@ jobs:
           aws ecs run-task --cluster globo_recommend-ecs-cluster \
                            --launch-type EC2 \
                            --network-configuration "awsvpcConfiguration={subnets=[subnet-0b9d98b0a2b8ba57d],securityGroups=[sg-09ec81b68014c2ffa]}" \
-                           --task-definition arn:aws:ecs:us-east-1:353061803834:task-definition/trainning-task:6
+                           --task-definition arn:aws:ecs:us-east-1:353061803834:task-definition/trainning-task:7
