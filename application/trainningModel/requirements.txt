@@ -3,3 +3,6 @@
 feast
 mlflow
 pandas
+numpy
+sklearn
+boto3
