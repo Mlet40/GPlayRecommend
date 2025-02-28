@@ -22,7 +22,7 @@ resource "aws_launch_template" "ecs_gpu" {
 
     spot_options {
       instance_interruption_behavior = "terminate"
-      max_price                    = "0.50"  # opcional: define o preço máximo que você está disposto a pagar
+      #max_price                    = "0.50"  # opcional: define o preço máximo que você está disposto a pagar
     }
   }
 
