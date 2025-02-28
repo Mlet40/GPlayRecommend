@@ -32,7 +32,7 @@ echo ECS_CLUSTER=${aws_ecs_cluster.this.name} >> /etc/ecs/ecs.config
 EOF
   )
 
-  security_groups = [aws_security_group.ecs_task_sg.id]
+   vpc_security_group_ids = [aws_security_group.ecs_task_sg.id]
 }
 
 
