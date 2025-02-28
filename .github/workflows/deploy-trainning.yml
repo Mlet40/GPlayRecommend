@@ -47,5 +47,5 @@ jobs:
         run: |
           aws ecs run-task --cluster globo_recommend-ecs-cluster \
                            --launch-type FARGATE \
-                           --network-configuration "awsvpcConfiguration={subnets=[subnet-0fe505b6ab2450770],assignPublicIp=ENABLED}" \
+                           --network-configuration "awsvpcConfiguration={subnets=[subnet-0b9d98b0a2b8ba57d],securityGroups=[sg-09ec81b68014c2ffa]}"
                            --task-definition $(aws ecs list-task-definitions --family-prefix trainning-task --sort DESC --max-items 1 --query 'taskDefinitionArns[0]' --output text)
