@@ -41,7 +41,8 @@ sim_df = pd.DataFrame(sim, index=df_based['page'], columns=df_based['page'])
 def save_to_s3(df, filename, prefix=output_prefix):
     buffer = BytesIO()
     df.to_parquet(buffer, index=False)
-    s3.put_object(Bucket=bucket_name, Key=f"{prefix}{filename}", Body=buffer.getvalue())
+    buffer.seek(0)  
+    s3.upload_fileobj(buffer, bucket_name, f"{prefix}{filename}")
 print('Salvando no s3')
 
 
