@@ -29,7 +29,7 @@ EOF
 # Auto Scaling Group para gerenciar as instâncias EC2 GPU
 resource "aws_autoscaling_group" "ecs_gpu_asg" {
   desired_capacity     = 1
-  max_size             = 1
+  max_size             = 2
   min_size             = 1
 
   launch_template {
