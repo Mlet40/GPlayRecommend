@@ -21,41 +21,24 @@ print("CARREGAR ARQUIVOS DO S3")
 response = s3.list_objects_v2(Bucket=bucket_name, Prefix=input_prefix)
 all_files = [obj['Key'] for obj in response.get('Contents', [])]
 
-# Seleciona os arquivos de treinamento (contendo "treino" no nome)
-print("Seleciona os arquivos de treinamento (contendo treino no nome)")
-treino_files = [key for key in all_files if "treino" in key]
-dfs_treino = [load_csv_from_s3(bucket_name, key) for key in treino_files]
-df_treino = pd.concat(dfs_treino, ignore_index=True)
-
 print("Seleciona os arquivos de itens (contendo itens-parte no nome)")
 part_files = [key for key in all_files if "itens-parte" in key]
 dfs_part = [load_csv_from_s3(bucket_name, key) for key in part_files]
 df_part = pd.concat(dfs_part, ignore_index=True)
 
-# --- PROCESSAMENTO DOS DADOS DE TREINO ---
-print("Remove registros indesejados na coluna 'history'")
-df_treino = df_treino[~df_treino['history'].str.contains(r"(esid:conteudo_editorial_g1)", na=False, case=False)]
-cols_split = ['history', 'timestampHistory', 'numberOfClicksHistory', 'timeOnPageHistory',
-              'scrollPercentageHistory', 'pageVisitsCountHistory', 'timestampHistory_new']
-for col in cols_split:
-    df_treino[col] = df_treino[col].str.split(',')
-df_treino = df_treino.explode(cols_split, ignore_index=True)
+#cria uma categoria de noticias regional / especiais
+df_part['categoria'] = df_part['url'].str.extract(r"g1\.globo\.com/([^/]+)/", expand=False).str.lower()
 
-print("Mescla os dados de treino com os itens")
-df = df_treino.merge(df_part, left_on='history', right_on='page', how='left')
+df_part['categoria'] = df_part['categoria'].replace({'rio-de-janeiro': 'rj', 'sao-paulo': 'sp', 'bahia': 'ba', 'espirito-santo': 'es',
+                                                                     'minas-gerais': 'mg', 'goias': 'go', 'mato-grosso-do-sul': 'ms', 'mato-grosso': 'mt',
+                                                                     'pernambuco': 'pe', 'distrito-federal': 'df', 'ceara': 'ce', 'parana': 'pr', 'amazonas': 'am', 'santa-catarina': 'sc','acre': 'ac',
+                                                                     None: 'especiais', 'piaui' : 'pi', 'rio-grande-do-norte': 'rn', 'maranhao': 'ma', 'paraiba': 'pb', 'para' : 'pa', 'amapa': 'ap', 'alagoas': 'al',
+                                                                     'rondonia': 'ro', 'rio-grande-do-sul': 'rs'})
 
-# --- PREPARAÇÃO PARA RECOMENDAÇÃO ---
-print("reajando a categoria")
-df['categoria'] = df['url'].str.extract(r"g1\.globo\.com/([^/]+)/", expand=False).str.lower()
-df['categoria'] = df['categoria'].replace({
-    'rio-de-janeiro': 'rj', 'sao-paulo': 'sp', 'bahia': 'ba', 'espirito-santo': 'es',
-    'minas-gerais': 'mg', 'goias': 'go', 'mato-grosso-do-sul': 'ms', 'mato-grosso': 'mt',
-    'pernambuco': 'pe', 'distrito-federal': 'df', 'ceara': 'ce', 'parana': 'pr', 'amazonas': 'am',
-    'santa-catarina': 'sc', 'acre': 'ac', None: 'especiais', 'piaui': 'pi', 'rio-grande-do-norte': 'rn',
-    'maranhao': 'ma', 'paraiba': 'pb', 'para': 'pa', 'amapa': 'ap', 'alagoas': 'al', 'rondonia': 'ro',
-    'rio-grande-do-sul': 'rs'
-})
+
+#Remove os espaços no inicio e remove registros que contém nulos
 df = df.dropna(subset=['url', 'issued', 'modified', 'title', 'body', 'caption'])
+df = df_part.applymap(lambda x: x.strip() if isinstance(x, str) else x)
 
 print("selecionadndo quantidade para teinamento")
 # Seleciona uma amostra para a próxima etapa
