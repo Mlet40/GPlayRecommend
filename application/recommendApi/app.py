@@ -3,13 +3,19 @@ import jwt
 import datetime
 from functools import wraps
 import pandas as pd
-import s3fs  # Necessário para que o pandas leia diretamente do S3
+import s3fs  # Necessário para ler o Parquet diretamente do S3
+from flask_caching import Cache
 
 app = Flask(__name__)
 app.config['SECRET_KEY'] = 'minha-chave-secreta'  # Substitua por um segredo forte
 
-# Variável global para armazenar o DataFrame em cache
-df_cache = None
+# Configuração do Flask-Caching para usar Redis
+app.config['CACHE_TYPE'] = 'redis'
+app.config['CACHE_REDIS_HOST'] = 'redis'           # Nome ou IP do host Redis (ajuste conforme seu ambiente)
+app.config['CACHE_REDIS_PORT'] = 6379
+app.config['CACHE_REDIS_DB'] = 0
+app.config['CACHE_DEFAULT_TIMEOUT'] = 3600         # Tempo de expiração do cache (1 hora)
+cache = Cache(app)
 
 # Middleware para verificar JWT
 def token_required(f):
@@ -20,7 +26,7 @@ def token_required(f):
             return jsonify({'message': 'Token ausente!'}), 403
         try:
             token = token.split(" ")[1]  # Remove 'Bearer ' do token
-            data = jwt.decode(token, app.config['SECRET_KEY'], algorithms=["HS256"])
+            jwt.decode(token, app.config['SECRET_KEY'], algorithms=["HS256"])
         except Exception as e:
             return jsonify({'message': 'Token inválido!', 'error': str(e)}), 403
         return f(*args, **kwargs)
@@ -29,7 +35,7 @@ def token_required(f):
 # Rota pública
 @app.route('/')
 def hello():
-    return jsonify({"message": "Hello, World! API rodando no ECS Service com Flask!"})
+    return jsonify({"message": "Hello, World! API rodando no ECS com Flask e Redis!"})
 
 # Rota de login (gera JWT)
 @app.route('/login', methods=['POST'])
@@ -39,7 +45,7 @@ def login():
         return jsonify({'message': 'Credenciais inválidas'}), 401
     
     # Usuário e senha fixos para teste
-    if auth['username'] == 'appClient' and auth['password'] == '1234':
+    if auth['username'] == 'admin' and auth['password'] == '1234':
         token = jwt.encode({
             'user': auth['username'],
             'exp': datetime.datetime.utcnow() + datetime.timedelta(hours=1)  # Expira em 1 hora
@@ -49,39 +55,34 @@ def login():
     
     return jsonify({'message': 'Usuário ou senha incorretos!!'}), 401
 
-# Carregar o arquivo Parquet em cache ao iniciar a aplicação
-@app.before_first_request
-def load_parquet():
-    global df_cache
-    try:
-        # Lê o arquivo Parquet diretamente do S3 usando s3fs
-        df_cache = pd.read_parquet("s3://globoplay-datalak/featStore/trainned/sim_df.parquet")
-        app.logger.info(f"Arquivo Parquet carregado com sucesso. Shape: {df_cache.shape}")
-    except Exception as e:
-        app.logger.error("Erro ao carregar o arquivo Parquet: %s", e)
-        # Opcional: Você pode optar por não levantar exceção aqui para que a API inicie mesmo sem dados
+# Função para carregar e cache o DataFrame usando Redis
+@cache.memoize(timeout=3600)  # Cache por 1 hora
+def get_df_cache():
+    # Essa função é chamada apenas uma vez a cada período de cache,
+    # e o resultado é serializado e armazenado no Redis.
+    df = pd.read_parquet("s3://globoplay-datalak/featStore/trainned/sim_df.parquet")
+    return df
 
-# Rota protegida para recomendar usando o TF-IDF treinado
+# Rota protegida para realizar a recomendação
 @app.route('/recommend', methods=['GET'])
 @token_required
 def recommend():
-    global df_cache
     param = request.args.get('param')
     if not param:
         return jsonify({'message': 'Parâmetro "param" é obrigatório na query string.'}), 400
 
-    if df_cache is None:
-        return jsonify({'message': 'Arquivo de dados não carregado.'}), 500
+    try:
+        df_cache = get_df_cache()
+    except Exception as e:
+        return jsonify({'message': 'Erro ao carregar dados do cache.', 'error': str(e)}), 500
     
     if param not in df_cache.columns:
         return jsonify({'message': f'Parâmetro "{param}" não encontrado nos dados.'}), 400
-    
+
     try:
         # Ordena os valores da coluna especificada em ordem decrescente
         sorted_series = df_cache[param].sort_values(ascending=False)
-        # Converte a Series ordenada em DataFrame
         result_df = pd.DataFrame(sorted_series)
-        # Converte o DataFrame para JSON no formato de lista de registros
         result_json = result_df.to_json(orient="records")
         return result_json, 200, {'Content-Type': 'application/json'}
     except Exception as e:

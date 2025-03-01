@@ -1,5 +1,5 @@
 # Dependências básicas
 flask
-pyjwt
-s3fs
 pandas
+s3fs
+flask_caching
