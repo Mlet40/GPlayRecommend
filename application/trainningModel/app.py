@@ -43,4 +43,5 @@ def save_to_s3(df, filename, prefix=output_prefix):
     df.to_parquet(buffer, index=False)
     s3.put_object(Bucket=bucket_name, Key=f"{prefix}{filename}", Body=buffer.getvalue())
 print('Salvando no s3')
+
 save_to_s3(sim_df, "sim_df.parquet")
