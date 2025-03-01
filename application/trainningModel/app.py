@@ -35,7 +35,8 @@ vec = TfidfVectorizer()
 tfidf = vec.fit_transform(df_based['body_clean'].astype(str))
 print('Iniciando similaridades')
 sim = cosine_similarity(tfidf)
-#sim_df = pd.DataFrame(sim, index=df_based['history'], columns=df_based['history'])
+print(len(sim))
+sim_df = pd.DataFrame(sim, index=df_based['history'], columns=df_based['history'])
 
 # --- SALVAR A MATRIZ DE SIMILARIDADE NO S3 ---
 def save_to_s3(df, filename, prefix=output_prefix):
