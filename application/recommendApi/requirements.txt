@@ -1,6 +1,4 @@
 # Dependências básicas
-# Exemplo: Feast, MLflow
-feast
-mlflow
 flask
 pyjwt
+s3fs
