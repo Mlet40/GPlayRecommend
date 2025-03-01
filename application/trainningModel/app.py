@@ -6,7 +6,6 @@ from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.metrics.pairwise import cosine_similarity
 import boto3
 
-
 # --- CONFIGURAÇÕES DO S3 ---
 print('Configuração do S3')
 bucket_name = "globoplay-datalak"
@@ -36,7 +35,7 @@ tfidf = vec.fit_transform(df_based['body_clean'].astype(str))
 print('Iniciando similaridades')
 sim = cosine_similarity(tfidf)
 print(len(sim))
-sim_df = pd.DataFrame(sim, index=df_based['history'], columns=df_based['history'])
+sim_df = pd.DataFrame(sim, index=df_based['page'], columns=df_based['page'])
 
 # --- SALVAR A MATRIZ DE SIMILARIDADE NO S3 ---
 def save_to_s3(df, filename, prefix=output_prefix):
