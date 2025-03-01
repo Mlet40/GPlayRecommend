@@ -2,16 +2,16 @@
 data "aws_ami" "ecs_optimized_gpu" {
   filter {
     name   = "name"
-    values = ["amzn2-ami-ecs-gpu-*"]
+    values = ["amzn2-ami-ecs-hvm-*-x86_64-ebs"]
   }
   owners      = ["amazon"]
   most_recent = true
 }
 
 resource "aws_launch_template" "ecs_gpu" {
-  name_prefix   = "ecs-gpu-"
-  image_id      = data.aws_ami.ecs_optimized_gpu.id
-  instance_type = "g4dn.2xlarge"  # Instância GPU com 8 vCPUs, 32GB de RAM e 1 GPU
+  name_prefix   = "ecs-r5-"
+  image_id      = data.aws_ami.ecs_optimized.id
+  instance_type = "r5.2xlarge"  # Instância com 8 vCPUs e 64GB de RAM
 
   iam_instance_profile {
     name = aws_iam_instance_profile.ecs_instance_profile.name
@@ -25,6 +25,7 @@ EOF
 
   vpc_security_group_ids = [aws_security_group.ecs_task_sg.id]
 }
+
 
 # Auto Scaling Group para gerenciar as instâncias EC2 GPU
 resource "aws_autoscaling_group" "ecs_gpu_asg" {
