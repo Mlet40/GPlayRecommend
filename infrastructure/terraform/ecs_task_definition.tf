@@ -35,8 +35,8 @@ resource "aws_ecs_task_definition" "trainningmodel_task" {
   family                   = "trainning-task"
   requires_compatibilities = ["EC2"]
   network_mode             = "awsvpc"
-  cpu                      = "4096"    # 4 CPUs
-  memory                   = "16384"   # 16GB de RAM
+  cpu                      = "8192"    # 8 vCPUs
+  memory                   = "32768"   # 32GB de RAM
   execution_role_arn       = aws_iam_role.ecs_execution_role.arn
   task_role_arn            = aws_iam_role.ecs_task_role.arn
 
@@ -44,8 +44,8 @@ resource "aws_ecs_task_definition" "trainningmodel_task" {
     {
       name      = "trainningmodel-container"
       image     = var.trainning_docker_image
-      cpu       = 4096      # 4 CPUs para o container
-      memory    = 16384     # 16GB de RAM para o container
+      cpu       = 8192      # 8 vCPUs para o container
+      memory    = 32768     # 32GB de RAM para o container
       essential = true
       logConfiguration = {
         logDriver = "awslogs",
@@ -54,10 +54,17 @@ resource "aws_ecs_task_definition" "trainningmodel_task" {
           "awslogs-region"        = "us-east-1",
           "awslogs-stream-prefix" = "ecs"
         }
-      }
+      },
+      resourceRequirements = [
+        {
+          type  = "GPU",
+          value = "1"
+        }
+      ]
     }
   ])
 }
+
 
 
 resource "aws_ecs_task_definition" "recommend-api-task" {
