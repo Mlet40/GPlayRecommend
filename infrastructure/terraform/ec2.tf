@@ -1,17 +1,17 @@
-# Data source para obter a AMI ECS Otimizada (padrão, não GPU)
-data "aws_ami" "ecs_optimized" {
+# Data source para obter a AMI ECS Otimizada para GPU
+data "aws_ami" "ecs_optimized_gpu" {
   filter {
     name   = "name"
-    values = ["amzn2-ami-ecs-hvm-*-x86_64-ebs"]
+    values = ["amzn2-ami-ecs-gpu-*"]
   }
   owners      = ["amazon"]
   most_recent = true
 }
 
-resource "aws_launch_template" "ecs_standard" {
-  name_prefix   = "ecs-standard-"
-  image_id      = data.aws_ami.ecs_optimized.id
-  instance_type = "c5.4xlarge"  # Instância rápida e adequada para TF-IDF
+resource "aws_launch_template" "ecs_gpu" {
+  name_prefix   = "ecs-gpu-"
+  image_id      = data.aws_ami.ecs_optimized_gpu.id
+  instance_type = "g4dn.2xlarge"  # Instância GPU com 8 vCPUs, 32GB de RAM e 1 GPU
 
   iam_instance_profile {
     name = aws_iam_instance_profile.ecs_instance_profile.name
@@ -26,14 +26,14 @@ EOF
   vpc_security_group_ids = [aws_security_group.ecs_task_sg.id]
 }
 
-# Auto Scaling Group para gerenciar as instâncias EC2 padrão
-resource "aws_autoscaling_group" "ecs_standard_asg" {
+# Auto Scaling Group para gerenciar as instâncias EC2 GPU
+resource "aws_autoscaling_group" "ecs_gpu_asg" {
   desired_capacity     = 1
   max_size             = 1
   min_size             = 1
 
   launch_template {
-    id      = aws_launch_template.ecs_standard.id
+    id      = aws_launch_template.ecs_gpu.id
     version = "$Latest"
   }
 
@@ -41,7 +41,7 @@ resource "aws_autoscaling_group" "ecs_standard_asg" {
 
   tag {
     key                 = "Name"
-    value               = "ecs-standard-instance"
+    value               = "ecs-gpu-instance"
     propagate_at_launch = true
   }
 }
