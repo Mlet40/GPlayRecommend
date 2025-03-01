@@ -10,7 +10,7 @@ data "aws_ami" "ecs_optimized_gpu" {
 
 resource "aws_launch_template" "ecs_gpu" {
   name_prefix   = "ecs-r5-"
-  image_id      = data.aws_ami.ecs_optimized.id
+  image_id      = data.aws_ami.ecs_optimized_gpu.id
   instance_type = "r5.2xlarge"  # Instância com 8 vCPUs e 64GB de RAM
 
   iam_instance_profile {
