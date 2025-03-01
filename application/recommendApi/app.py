@@ -62,6 +62,7 @@ def get_df_cache():
     # e o resultado é serializado e armazenado no Redis.
     df = pd.read_parquet("s3://globoplay-datalak/featStore/trainned/sim_df.parquet")
     return df
+    
 
 # Rota protegida para realizar a recomendação
 @app.route('/recommend', methods=['GET'])
