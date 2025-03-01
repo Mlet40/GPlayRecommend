@@ -54,13 +54,7 @@ resource "aws_ecs_task_definition" "trainningmodel_task" {
           "awslogs-region"        = "us-east-1",
           "awslogs-stream-prefix" = "ecs"
         }
-      },
-      resourceRequirements = [
-        {
-          type  = "GPU",
-          value = "1"
-        }
-      ]
+      }
     }
   ])
 }
