@@ -67,8 +67,8 @@ resource "aws_ecs_task_definition" "recommend-api-task" {
     {
       name      = "recommend-api-container"
       image     = "${var.recommend_api_docker_image}"
-      cpu       = 256
-      memory    = 512
+      cpu       = 4096
+      memory    = 16384
       essential = true
 	  portMappings = [
         {
@@ -89,8 +89,8 @@ resource "aws_ecs_task_definition" "recommend-api-task" {
   ])
   requires_compatibilities = ["FARGATE"]
   network_mode             = "awsvpc"
-  memory                   = "512"
-  cpu                      = "256"
+  memory                   = "16384"
+  cpu                      = "4096"
   execution_role_arn = aws_iam_role.ecs_execution_role.arn
   task_role_arn       = aws_iam_role.ecs_task_role.arn
 }
