@@ -46,4 +46,4 @@ def save_to_s3(df, filename, prefix=output_prefix):
 print('Salvando no s3')
 
 
-#save_to_s3(sim_df, "sim_df.parquet")
+save_to_s3(sim_df, "sim_df.parquet")
