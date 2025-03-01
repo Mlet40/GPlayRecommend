@@ -2,3 +2,4 @@
 flask
 pyjwt
 s3fs
+pandas
