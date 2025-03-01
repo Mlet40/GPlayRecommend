@@ -37,7 +37,7 @@ df_part['categoria'] = df_part['categoria'].replace({'rio-de-janeiro': 'rj', 'sa
 
 
 #Remove os espaços no inicio e remove registros que contém nulos
-df = df.dropna(subset=['url', 'issued', 'modified', 'title', 'body', 'caption'])
+df = df_part.dropna(subset=['url', 'issued', 'modified', 'title', 'body', 'caption'])
 df = df_part.applymap(lambda x: x.strip() if isinstance(x, str) else x)
 
 print("selecionadndo quantidade para teinamento")
