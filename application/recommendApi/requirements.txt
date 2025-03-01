@@ -4,3 +4,4 @@ pandas
 s3fs
 flask_caching
 jwt
+redis
