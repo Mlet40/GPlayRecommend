@@ -5,4 +5,4 @@ s3fs
 Flask-Caching
 redis
 PyJWT
-pyarrow
+fastparquet>=0.6.0
