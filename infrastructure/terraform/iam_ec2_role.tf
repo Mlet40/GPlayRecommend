@@ -26,3 +26,23 @@ resource "aws_iam_instance_profile" "ecs_instance_profile" {
   name = "ecsInstanceProfile"
   role = aws_iam_role.ecs_instance_role.name
 }
+
+resource "aws_iam_policy" "sagemaker_ec2_describe_subnets" {
+  name        = "SageMakerEC2DescribeSubnets"
+  description = "Permite que o role do SageMaker execute ec2:DescribeSubnets"
+  policy = jsonencode({
+    "Version": "2012-10-17",
+    "Statement": [
+      {
+        "Effect": "Allow",
+        "Action": "ec2:DescribeSubnets",
+        "Resource": "*"
+      }
+    ]
+  })
+}
+
+resource "aws_iam_role_policy_attachment" "sagemaker_subnets_attachment" {
+  role       = "AmazonSageMakerServiceCatalogProductsUseRole"
+  policy_arn = aws_iam_policy.sagemaker_ec2_describe_subnets.arn
+}
