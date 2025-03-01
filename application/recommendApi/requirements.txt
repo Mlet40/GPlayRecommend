@@ -3,3 +3,4 @@ flask
 pandas
 s3fs
 flask_caching
+jwt
