@@ -64,7 +64,7 @@ print('Número de similaridades calculadas:', len(sim))
 sim_df = pd.DataFrame(sim, index=df_based['page'], columns=df_based['page'])
 
 print('Salvando arquivo Parquet no S3')
-save_to_s3(sim_df, "sim_df.parquet")
+save_to_s3(sim_df, "sim_df.parquet",output_prefix)
 
 print('Salvando arquivo Redis')
 save_to_redis(sim_df)
