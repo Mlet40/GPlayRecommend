@@ -37,3 +37,9 @@ resource "aws_cloudwatch_event_target" "ecs_run_task_trainning_target" {
     
   }
 }
+
+resource "aws_cloudwatch_event_target" "s3_object_update_featstore_target" {
+  rule      = aws_cloudwatch_event_rule.s3_object_update_featstore_rule.name
+  target_id = "sendToCloudWatchLogs"
+  arn       = aws_cloudwatch_log_group.eventbridge_logs.arn
+}
