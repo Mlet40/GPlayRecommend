@@ -9,11 +9,18 @@ import redis
 import pickle
 import math
 
+# --- CONFIGURAÇÃO DO REDIS ---
+redis_host = "my-redis-cache.ichbon.0001.use1.cache.amazonaws.com"  # Exemplo: "redis.mycompany.cache.amazonaws.com" ou "localhost"
+redis_port = 6379
+
+
 
 def save_dataframe_in_chunks(df, base_key, chunk_size=1000):
     # Divide o DataFrame em chunks de "chunk_size" linhas
     total_rows = df.shape[0]
     total_chunks = math.ceil(total_rows / chunk_size)
+    # Cria o cliente Redis sem autenticação
+    redis_client = redis.Redis(host=redis_host, port=redis_port)
     
     for i in range(total_chunks):
         chunk_df = df.iloc[i*chunk_size:(i+1)*chunk_size]
@@ -28,16 +35,8 @@ def save_dataframe_in_chunks(df, base_key, chunk_size=1000):
 
 
 def save_to_redis(sim_df):    
-
-    # --- CONFIGURAÇÃO DO REDIS ---
-    # Como o ElastiCache Redis foi provisionado sem auth_token,
-    # não precisamos passar usuário ou senha.
-    redis_host = "my-redis-cache.ichbon.0001.use1.cache.amazonaws.com"  # Exemplo: "redis.mycompany.cache.amazonaws.com" ou "localhost"
-    redis_port = 6379
-
     # Cria o cliente Redis sem autenticação
     redis_client = redis.Redis(host=redis_host, port=redis_port)
-
     # --- ARMAZENAR A MATRIZ DE SIMILARIDADE NO REDIS ---
     # Serializa o DataFrame usando pickle.
     redis_key = "sim_df"
@@ -85,6 +84,7 @@ print('Salvando arquivo Parquet no S3')
 save_to_s3(sim_df, "sim_df.parquet",output_prefix)
 
 print('Salvando arquivo Redis')
+
 save_dataframe_in_chunks(sim_df, "sim_df", chunk_size=1000)
 
 print("Processo concluído com sucesso.")
