@@ -11,9 +11,10 @@ app.config['SECRET_KEY'] = 'minha-chave-secreta'  # Substitua por um segredo for
 
 # Configuração do Redis
 # Atualize 'redis' com o endpoint correto se necessário.
-redis_host = "redis"  
+redis_host = "my-redis-cache.ichbon.0001.use1.cache.amazonaws.com"  
 redis_port = 6379
 redis_client = redis.Redis(host=redis_host, port=redis_port)
+
 
 def load_dataframe_from_chunks(base_key):
     """
