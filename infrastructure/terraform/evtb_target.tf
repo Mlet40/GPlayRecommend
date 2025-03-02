@@ -34,6 +34,6 @@ resource "aws_cloudwatch_event_target" "ecs_run_task_trainning_target" {
       security_groups  = [aws_security_group.ecs_task_sg.id]
     }
 
-    platform_version = "1.4.0"
+    
   }
 }
