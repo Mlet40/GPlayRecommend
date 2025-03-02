@@ -84,6 +84,16 @@ save_to_s3(sim_df, "sim_df.parquet",output_prefix)
 
 print('Salvando arquivo Redis')
 
-save_dataframe_in_chunks(sim_df, "sim_df", chunk_size=1000)
+#save_dataframe_in_chunks(sim_df, "sim_df", chunk_size=1000)
+#salvando no redis
+for param in sim_df.columns:
+    # Ordena os valores da coluna em ordem decrescente
+    sorted_series = sim_df[param].sort_values(ascending=False).head(10)
+    # Converte a Series para JSON; pode ajustar o orient conforme necessário
+    result_json = sorted_series.to_json(orient="records")
+    # Salva no Redis com a chave "recommend:{param}"
+    redis_key = f"recommend:{param}"
+    redis_client.set(redis_key, result_json)
+    print(f"Salvou recomendação para '{param}' em {redis_key}.")
 
 print("Processo concluído com sucesso.")
