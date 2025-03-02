@@ -76,10 +76,3 @@ def recommend():
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=5000)
 
-        result_json = result_df.to_json(orient="records")
-        return result_json, 200, {'Content-Type': 'application/json'}
-    except Exception as e:
-        return jsonify({'message': 'Erro ao processar a requisição.', 'error': str(e)}), 500
-
-if __name__ == '__main__':
-    app.run(host='0.0.0.0', port=5000)
