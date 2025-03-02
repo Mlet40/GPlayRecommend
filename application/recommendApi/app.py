@@ -3,21 +3,47 @@ import jwt
 import datetime
 from functools import wraps
 import pandas as pd
-import s3fs  # Necessário para ler o Parquet diretamente do S3
-from flask_caching import Cache
+import redis
+import pickle
 
 app = Flask(__name__)
 app.config['SECRET_KEY'] = 'minha-chave-secreta'  # Substitua por um segredo forte
 
-# Configuração do Flask-Caching para usar Redis
-app.config['CACHE_TYPE'] = 'redis'
-app.config['CACHE_REDIS_HOST'] = 'redis'           # Nome ou IP do host Redis (ajuste conforme seu ambiente)
-app.config['CACHE_REDIS_PORT'] = 6379
-app.config['CACHE_REDIS_DB'] = 0
-app.config['CACHE_DEFAULT_TIMEOUT'] = 3600         # Tempo de expiração do cache (1 hora)
-cache = Cache(app)
+# Configuração do Redis
+# Atualize 'redis' com o endpoint correto se necessário.
+redis_host = "redis"  
+redis_port = 6379
+redis_client = redis.Redis(host=redis_host, port=redis_port)
 
-# Middleware para verificar JWT
+def load_dataframe_from_chunks(base_key):
+    """
+    Recupera os chunks armazenados no Redis e reconstrói o DataFrame completo.
+    """
+    chunks_count = redis_client.get(f"{base_key}_chunks_count")
+    if chunks_count is None:
+        print("Número de chunks não encontrado no Redis.")
+        return None
+    chunks_count = int(chunks_count)
+    
+    df_list = []
+    for i in range(chunks_count):
+        redis_key = f"{base_key}_chunk_{i}"
+        serialized_chunk = redis_client.get(redis_key)
+        if serialized_chunk is None:
+            print(f"Chunk {i} não encontrado no Redis.")
+            continue
+        # Desserializa o chunk
+        chunk_df = pickle.loads(serialized_chunk)
+        df_list.append(chunk_df)
+    
+    if df_list:
+        df = pd.concat(df_list, ignore_index=True)
+        return df
+    else:
+        print("Nenhum chunk foi carregado.")
+        return None
+
+# Middleware para verificação do JWT
 def token_required(f):
     @wraps(f)
     def decorated(*args, **kwargs):
@@ -37,7 +63,7 @@ def token_required(f):
 def hello():
     return jsonify({"message": "Hello, World! API rodando no ECS com Flask e Redis!"})
 
-# Rota de login (gera JWT)
+# Rota de login para gerar JWT
 @app.route('/login', methods=['POST'])
 def login():
     auth = request.json
@@ -46,25 +72,19 @@ def login():
     
     # Usuário e senha fixos para teste
     if auth['username'] == 'admin' and auth['password'] == '1234':
-        token = jwt.encode({
+        payload = {
             'user': auth['username'],
-            'exp': datetime.datetime.utcnow() + datetime.timedelta(hours=1)  # Expira em 1 hora
-        }, app.config['SECRET_KEY'], algorithm="HS256")
-        
+            'exp': datetime.datetime.utcnow() + datetime.timedelta(hours=1)
+        }
+        token = jwt.encode(payload, app.config['SECRET_KEY'], algorithm="HS256")
+        # Converte para string caso o token seja bytes
+        if isinstance(token, bytes):
+            token = token.decode('utf-8')
         return jsonify({'token': token})
     
     return jsonify({'message': 'Usuário ou senha incorretos!!'}), 401
 
-# Função para carregar e cache o DataFrame usando Redis
-@cache.memoize(timeout=3600)  # Cache por 1 hora
-def get_df_cache():
-    # Essa função é chamada apenas uma vez a cada período de cache,
-    # e o resultado é serializado e armazenado no Redis.
-    df = pd.read_parquet("s3://globoplay-datalak/featStore/trainned/sim_df.parquet")
-    return df
-    
-
-# Rota protegida para realizar a recomendação
+# Rota protegida para recomendar utilizando os dados armazenados em Redis
 @app.route('/recommend', methods=['GET'])
 @token_required
 def recommend():
@@ -73,9 +93,12 @@ def recommend():
         return jsonify({'message': 'Parâmetro "param" é obrigatório na query string.'}), 400
 
     try:
-        df_cache = get_df_cache()
+        df_cache = load_dataframe_from_chunks("sim_df")
     except Exception as e:
         return jsonify({'message': 'Erro ao carregar dados do cache.', 'error': str(e)}), 500
+    
+    if df_cache is None:
+        return jsonify({'message': 'Nenhum dado carregado do cache Redis.'}), 500
     
     if param not in df_cache.columns:
         return jsonify({'message': f'Parâmetro "{param}" não encontrado nos dados.'}), 400
