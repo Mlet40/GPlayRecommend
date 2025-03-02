@@ -88,10 +88,13 @@ redis_client = redis.Redis(host=redis_host, port=redis_port)
 #save_dataframe_in_chunks(sim_df, "sim_df", chunk_size=1000)
 #salvando no redis
 for param in sim_df.columns:
-    # Ordena os valores da coluna em ordem decrescente
+    # Ordena os valores da coluna em ordem decrescente e pega os top 10
     sorted_series = sim_df[param].sort_values(ascending=False).head(10)
-    # Converte a Series para JSON; pode ajustar o orient conforme necessário
-    result_json = sorted_series.to_json(orient="records")
+    # Converte a Series para DataFrame, preservando o índice (page) e os valores (score)
+    df_recommend = sorted_series.reset_index()
+    df_recommend.columns = ["page", "score"]
+    # Converte o DataFrame para JSON
+    result_json = df_recommend.to_json(orient="records")
     # Salva no Redis com a chave "recommend:{param}"
     redis_key = f"recommend:{param}"
     redis_client.set(redis_key, result_json)
