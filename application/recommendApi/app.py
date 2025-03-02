@@ -9,6 +9,8 @@ import pickle
 app = Flask(__name__)
 app.config['SECRET_KEY'] = 'minha-chave-secreta'  # Substitua por um segredo forte
 
+
+
 # Configuração do Redis
 # Atualize 'redis' com o endpoint correto se necessário.
 redis_host = "my-redis-cache.ichbon.0001.use1.cache.amazonaws.com"  

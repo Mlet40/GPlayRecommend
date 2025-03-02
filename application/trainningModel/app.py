@@ -83,6 +83,7 @@ print('Salvando arquivo Parquet no S3')
 save_to_s3(sim_df, "sim_df.parquet",output_prefix)
 
 print('Salvando arquivo Redis')
+
 redis_client = redis.Redis(host=redis_host, port=redis_port)
 #save_dataframe_in_chunks(sim_df, "sim_df", chunk_size=1000)
 #salvando no redis
