@@ -7,6 +7,24 @@ from sklearn.metrics.pairwise import cosine_similarity
 import boto3
 import redis
 import pickle
+import math
+
+
+def save_dataframe_in_chunks(df, base_key, chunk_size=1000):
+    # Divide o DataFrame em chunks de "chunk_size" linhas
+    total_rows = df.shape[0]
+    total_chunks = math.ceil(total_rows / chunk_size)
+    
+    for i in range(total_chunks):
+        chunk_df = df.iloc[i*chunk_size:(i+1)*chunk_size]
+        serialized_chunk = pickle.dumps(chunk_df)
+        redis_key = f"{base_key}_chunk_{i}"
+        redis_client.set(redis_key, serialized_chunk)
+        print(f"Salvou chunk {i} com {chunk_df.shape[0]} linhas.")
+
+    # Opcional: armazenar metadados para recompor os chunks
+    redis_client.set(f"{base_key}_chunks_count", total_chunks)
+
 
 
 def save_to_redis(sim_df):    
@@ -67,6 +85,6 @@ print('Salvando arquivo Parquet no S3')
 save_to_s3(sim_df, "sim_df.parquet",output_prefix)
 
 print('Salvando arquivo Redis')
-save_to_redis(sim_df)
+save_dataframe_in_chunks(sim_df, "sim_df", chunk_size=1000)
 
 print("Processo concluído com sucesso.")
