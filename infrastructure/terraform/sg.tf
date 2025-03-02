@@ -44,4 +44,30 @@ resource "aws_security_group" "ecs_task_sg" {
   }
 }
 
+# Security Group para o Redis
+resource "aws_security_group" "redis_sg" {
+  name        = "redis-sg"
+  description = "Security group for Redis ElastiCache"
+  vpc_id      = aws_vpc.this.id
+
+  ingress {
+    description = "Allow inbound Redis traffic"
+    from_port   = 6379
+    to_port     = 6379
+    protocol    = "tcp"
+    cidr_blocks = ["0.0.0.0/0"]  # Ajuste conforme necessário (recomenda-se restringir)
+  }
+
+  egress {
+    description = "Allow all outbound traffic"
+    from_port   = 0
+    to_port     = 0
+    protocol    = "-1"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+
+  tags = {
+    Name = "redis-sg"
+  }
+}
 

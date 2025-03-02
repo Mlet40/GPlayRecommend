@@ -154,3 +154,4 @@ resource "aws_vpc_endpoint" "ecr_dkr" {
   subnet_ids         = [aws_subnet.private_subnet.id]  # Correção: Colocar em lista
   security_group_ids = [aws_security_group.ecs_sg.id] # Correção: Colocar em lista
 }
+
