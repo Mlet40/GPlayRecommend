@@ -33,7 +33,7 @@ def load_parquet_from_s3(bucket, key):
     return pd.read_parquet(BytesIO(data))
     
  # --- SALVAR A MATRIZ DE SIMILARIDADE NO S3 ---
-def save_to_s3(df, filename, prefix=output_prefix):
+def save_to_s3(df, filename, prefix):
     buffer = BytesIO()
     df.to_parquet(buffer, index=False)
     buffer.seek(0)
