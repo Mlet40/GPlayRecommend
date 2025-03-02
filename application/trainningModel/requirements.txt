@@ -6,3 +6,5 @@ pandas
 numpy
 scikit-learn
 boto3
+redis
+pyarrow  # ou fastparquet, para suporte a parquet
