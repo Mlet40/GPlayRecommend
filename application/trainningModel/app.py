@@ -14,7 +14,7 @@ def save_to_redis(sim_df):
     # --- CONFIGURAÇÃO DO REDIS ---
     # Como o ElastiCache Redis foi provisionado sem auth_token,
     # não precisamos passar usuário ou senha.
-    redis_host = "my-redis-cache.ichbon.0001.use1.cache.amazonaws.com:6379"  # Exemplo: "redis.mycompany.cache.amazonaws.com" ou "localhost"
+    redis_host = "my-redis-cache.ichbon.0001.use1.cache.amazonaws.com"  # Exemplo: "redis.mycompany.cache.amazonaws.com" ou "localhost"
     redis_port = 6379
 
     # Cria o cliente Redis sem autenticação
