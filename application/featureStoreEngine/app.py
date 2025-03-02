@@ -35,14 +35,21 @@ df_part['categoria'] = df_part['categoria'].replace({'rio-de-janeiro': 'rj', 'sa
                                                                      None: 'especiais', 'piaui' : 'pi', 'rio-grande-do-norte': 'rn', 'maranhao': 'ma', 'paraiba': 'pb', 'para' : 'pa', 'amapa': 'ap', 'alagoas': 'al',
                                                                      'rondonia': 'ro', 'rio-grande-do-sul': 'rs'})
 
+#selecionando somente as datas mais recentes
+df_part['issued'] = pd.to_datetime(df_part['issued'], utc=True)
+
+max_date = df_part['issued'].max()
+
+# Obter a data de 1 mes atras
+three_months_ago = max_date - pd.DateOffset(months=1)
+
+# Filtrar o DataFrame
+df_part = df_part[df_part['issued'] >= three_months_ago]
+
 
 #Remove os espaços no inicio e remove registros que contém nulos
 df = df_part.dropna(subset=['url', 'issued', 'modified', 'title', 'body', 'caption'])
-df = df_part.applymap(lambda x: x.strip() if isinstance(x, str) else x)
-
-print("selecionadndo quantidade para teinamento")
-# Seleciona uma amostra para a próxima etapa
-df_based = df.sample(n=30000, random_state=400)
+df_based = df_part.applymap(lambda x: x.strip() if isinstance(x, str) else x)
 
 # --- LIMPEZA DO TEXTO ---
 print("limpando stopwords")
@@ -79,3 +86,4 @@ def save_to_s3(df, filename, prefix=output_prefix):
 print("salvando no s3")
 # Exemplo: salvar o DataFrame pré-processado (featstore base) em formato Parquet
 save_to_s3(df_based, "featstore_base.parquet")
+print(df_based.head(10))
