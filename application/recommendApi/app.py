@@ -54,6 +54,7 @@ def login():
     
     return jsonify({'message': 'Usuário ou senha incorretos!!'}), 401
 
+
 # Rota protegida para realizar a recomendação consultando diretamente o Redis
 @app.route('/recommend', methods=['GET'])
 @token_required
