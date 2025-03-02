@@ -46,10 +46,12 @@ three_months_ago = max_date - pd.DateOffset(months=1)
 # Filtrar o DataFrame
 df_part = df_part[df_part['issued'] >= three_months_ago]
 
-
 #Remove os espaços no inicio e remove registros que contém nulos
 df = df_part.dropna(subset=['url', 'issued', 'modified', 'title', 'body', 'caption'])
-df_based = df_part.applymap(lambda x: x.strip() if isinstance(x, str) else x)
+
+df['body_complete'] = df[['title', 'body', 'caption', 'categoria']].agg(' '.join, axis=1)
+
+df_based = df.applymap(lambda x: x.strip() if isinstance(x, str) else x)
 
 # --- LIMPEZA DO TEXTO ---
 print("limpando stopwords")
@@ -76,7 +78,7 @@ def limpar_descricao(descricao):
     palavras_limpa = [palavra for palavra in palavras if palavra not in stop_words and palavra not in string.punctuation]
     return ' '.join(palavras_limpa)
 
-df_based['body_clean'] = df_based['body'].apply(limpar_descricao)
+df_based['body_clean'] = df_based['body_complete'].apply(limpar_descricao)
 
 # --- SALVAR O RESULTADO NA FEATURE STORE ---
 def save_to_s3(df, filename, prefix=output_prefix):
