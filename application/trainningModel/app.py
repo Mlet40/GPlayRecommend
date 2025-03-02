@@ -33,7 +33,6 @@ def save_dataframe_in_chunks(df, base_key, chunk_size=1000):
     redis_client.set(f"{base_key}_chunks_count", total_chunks)
 
 
-
 def save_to_redis(sim_df):    
     # Cria o cliente Redis sem autenticação
     redis_client = redis.Redis(host=redis_host, port=redis_port)
