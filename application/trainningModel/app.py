@@ -8,6 +8,7 @@ import boto3
 import redis
 import pickle
 
+
 def save_to_redis(sim_df):    
 
     # --- CONFIGURAÇÃO DO REDIS ---
